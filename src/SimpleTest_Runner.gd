@@ -10,7 +10,7 @@ class_name SimpleTest_Runner
 
 signal runner_ready(SimpleTest_Runner)
 
-static var SimpleTest_CanvasTscn = preload("res://addons/simple_unit_test/src/ui/SimpleTest_Canvas.tscn")
+static var SimpleTest_CanvasTscn = preload("./ui/SimpleTest_Canvas.tscn")
 
 #########################
 # Warning Handling Code #

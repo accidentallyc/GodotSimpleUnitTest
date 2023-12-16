@@ -1,7 +1,7 @@
 extends Node
 class_name SimpleTest
 
-static var SimpleTest_LineItemTscn = preload("res://addons/simple_unit_test/src/ui/SimpleTest_LineItem.tscn")
+static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
 
 ######################
 ## Expect Functions ##
