@@ -1,11 +1,17 @@
+@icon("res://addons/godot_simple_test/src/ui/icon_test.png")
 extends Node
+
+## Base class that all SimpleTests should extend from.
+## This cannot be run by itself
 class_name SimpleTest
 
 static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
 
+"""
 ######################
 ## Expect Functions ##
 ######################
+"""
 
 func expect_equal(a,b, description = ""):
 	var result = LambdaOperations.equals(a,b)
@@ -18,15 +24,20 @@ func expect_orphan_nodes(n):
 func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
 	
+"""
 ####################
 ## Internal Stuff ##
 ####################
+"""
 
 var _ln_item
 var _results:Array[String]
 var _test_case_line_item_map = {}
 var _runner
 
+"""
+NOTE: This _has_ to be overriden by runner
+"""
 func _ready():
 	owner.runner_ready.connect(__on_runner_ready,Object.CONNECT_ONE_SHOT)
 

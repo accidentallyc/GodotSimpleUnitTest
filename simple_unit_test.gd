@@ -2,4 +2,11 @@
 extends EditorPlugin
 
 func _enter_tree():
-	print("Simple Test activated.")
+	var expected_path = "res://addons/godot_simple_test"
+	var dir = DirAccess.open(expected_path)
+	
+	if dir:
+		print("Simple Test activated.")
+	else:
+		printerr("Warning, SimpleTest folder should reside at ",expected_path,". This will break a few things")
+

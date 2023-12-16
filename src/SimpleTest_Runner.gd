@@ -1,20 +1,21 @@
-## Root of a SimpleTest Scene
-## Assign this as the root node
-@tool
-extends Node
-class_name SimpleTest_Runner
+@icon("res://addons/godot_simple_test/src/ui/icon_runner.png")
 
-## Starting from this folder, recursively look for test files
-@export var root:String = "res://test"
-@export var suffix:String = 'Test.gd';
+@tool
+extends SimpleTest
+
+## Root of a SimpleTest Scene. Assign this as the root node. 
+## Do not extend this. Use as is.
+class_name SimpleTest_Runner
 
 signal runner_ready(SimpleTest_Runner)
 
 static var SimpleTest_CanvasTscn = preload("./ui/SimpleTest_Canvas.tscn")
 
+"""
 #########################
 # Warning Handling Code #
 #########################
+"""
 func _enter_tree():
 	child_entered_tree.connect(func(_dummy): update_configuration_warnings())
 
@@ -23,7 +24,6 @@ func _get_configuration_warnings():
 		return ["SimpleTest_Runner must be a root node"]
 	else:
 		return []
-
 
 var _canvas:SimpleTest_Canvas
 
