@@ -1,4 +1,7 @@
 class_name LambdaOperations
 
 static func equals(a,b):
-	return typeof(a) == typeof(b) && a == b
+	if typeof(a) == typeof(b):
+		return a == b
+	else:
+		return str(a) == str(b)
