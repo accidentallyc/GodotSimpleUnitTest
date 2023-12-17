@@ -18,7 +18,7 @@ func expect_equal(a,b, description = &""):
 	if !result:
 		_results.append(description 
 		if description 
-		else "Expected %s(%s) to equal %s(%s)" % [
+		else "Expected %s(%s) to loosely equal in %s(%s)" % [
 			a,
 			__type_to_str(typeof(a)),
 			b,
