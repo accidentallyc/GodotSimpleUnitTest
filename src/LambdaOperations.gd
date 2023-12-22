@@ -12,4 +12,8 @@ static func equals(a,b):
 
 ## Does a strict equality check that compares type and value
 static func equals_strict(a,b):
-	return typeof(a) == typeof(b) && a == b
+	var typeA = typeof(a);
+	if typeA != typeof(b) :
+		return false
+
+	return  is_same(a,b)

@@ -12,47 +12,52 @@ static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
 ## Expect Functions ##
 ######################
 """
+func expect(value):
+	return SimpleTest_ExpectBuilder.new(self,value)
 
-func expect_equal(a,b, description = &""):
-	var result = LambdaOperations.equals(a,b)
-	if !result:
-		_results.append(description 
-		if description 
-		else "Expected %s(%s) to loosely equal in %s(%s)" % [
-			a,
-			__type_to_str(typeof(a)),
-			b,
-			__type_to_str(typeof(b))
-		]
-		)
+func expect_been_called(spy:SimpleTest_Spy, description = null):
+	__assert( 
+		len(spy.callstack) > 0,
+		description,
+		&"Expected func to have been called atleast once"
+	)
+func expect_equal(a,b, description = null):
+	__assert(
+		LambdaOperations.equals(a,b),
+		description,
+		&"Expected %s(%s) to loosely equal in %s(%s)" % [a,__type_to_str(typeof(a)),b,__type_to_str(typeof(b))]
+	)
 
-func expect_equal_strict(a,b,description = &""):
+func expect_equal_strict(a,b,description = null):
 	var result = LambdaOperations.equals_strict(a,b)
 	var typaA = typeof(a)
 	var typeB = typeof(b)
-	if !result:
-		var addendum = " - types not matching" if typaA != typeB else ""
-		_results.append(description 
-		if description 
-		else "Expected %s(%s) to STRICTLY equal %s(%s) %s" % [
-			a,
-			__type_to_str(typeof(a)),
-			b,
-			__type_to_str(typeof(b)),
-			addendum
-			]
-		)
+	var addendum = " - types not matching" if typaA != typeB else ""
+	__assert(
+		LambdaOperations.equals_strict(a,b),
+		description,
+		&"Expected %s(%s) to STRICTLY equal %s(%s) %s" % [a,__type_to_str(typeof(a)),b,__type_to_str(typeof(b)),addendum]
+	)
 
 func expect_orphan_nodes(n):
 	Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n
 	
 func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
+
+"""
+////////////////////////////
+// Some Utility Functions //
+////////////////////////////
+"""
+
+func spy():
+	return SimpleTest_Spy.new()
 	
 """
-####################
-## Internal Stuff ##
-####################
+////////////////////
+// Internal Stuff //
+////////////////////
 """
 
 var _ln_item
@@ -129,6 +134,10 @@ func __get_test_cases():
 		case.fn = entry.name
 		cases.append(case)
 	return cases
+
+func __assert(result:bool, description, default):
+	if !result:
+		_results.append(description if description else default)
 	
 static func __type_to_str(type:int):
 	match type:
