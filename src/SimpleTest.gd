@@ -20,6 +20,10 @@ func expect_orphan_nodes(n):
 	
 func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
+	
+## Overrides the displayed test name. This is optional
+func test_name(override_test_name:String):
+	_override_test_name = override_test_name
 
 """
 //////////////////////////stub//
@@ -38,6 +42,9 @@ func stub():
 
 var _ln_item
 var _results:Array[String]
+## Only used for displaying purposes
+var _curr_test_name = null
+var _override_test_name = null
 var _test_case_line_item_map = {}
 var _runner
 
@@ -78,21 +85,33 @@ func __on_main_line_item_ready():
 		_ln_item.add_block(case_ln_item)
 			
 func __run_test(method_name, ln_item):
+	# Reset all errors
 	_results = []
+	
+	# Only used for debugging purposes
+	_curr_test_name = method_name
+		
+	# Perform the test
 	self.call(method_name)
+	
+	# Update the actual text element
+	if _override_test_name:
+		ln_item.description = _override_test_name
+	
+	# Update the pass - fail
 	ln_item.status = &"FAIL" if len(_results) > 0 else &"PASS"
 	ln_item.clear_blocks()
 	for f in _results:
 		var f_line_item = SimpleTest_LineItemTscn.instantiate()
 		f_line_item.description = f
 		ln_item.add_block(f_line_item)
+		
+	_override_test_name = null
+	_curr_test_name = null
 	
 func __run_all_tests():
 	_ln_item.queue_free()
 	__on_runner_ready(_runner)
-	#for case in __get_test_cases():
-		#var ln_item = _test_case_line_item_map[case.fn]
-		#__run_test(case.fn,ln_item)
 	
 func __get_test_cases():
 	var cases = []
@@ -102,7 +121,8 @@ func __get_test_cases():
 				entry.name.begins_with(&"it") \
 				|| entry.name.begins_with(&"should") \
 				|| entry.name.begins_with(&"test") \
-			):
+			) \
+			or entry.name == 'test_name':
 			continue
 			
 		var case = {}

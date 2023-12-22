@@ -34,12 +34,13 @@ func equal(other, description = null):
 			LambdaOperations.equals_strict(value,other) if __flag_strict else LambdaOperations.equals(value,other)
 		),
 		description,
-		&"Expected {v1}({t1}) to {equal} in {v2}({t2})".format({
+		&"Expected {v1}({t1}) to {not}{equal} in {v2}({t2})".format({
 			&"v1":value,
 			&"v2":other,
 			&"t1":__type_to_str(typeof(value)),
 			&"t2":__type_to_str(typeof(other)),
-			&"equal": &"STRICTLY equal" if __flag_strict else &"loosely equal"
+			&"equal": &"STRICTLY equal" if __flag_strict else &"loosely equal",
+			&"not": &"" if __flag_not_notted else &"NOT ",
 		})
 	)
 	
@@ -85,7 +86,7 @@ func called_n_times(n:int, description = null):
 var __flag_strict = false
 var __flag_not_notted = true
 func __to_notted(r:bool):
-	return r if __flag_not_notted else !r
+	return r if __flag_not_notted else not(r)
 	
 static func __type_to_str(type:int):
 	match type:

@@ -22,6 +22,7 @@ var description = &"":
 			update_element()
 
 var _is_ready = false
+var parent_ln_item
 func _ready():
 	update_element()
 	_is_ready = true
@@ -44,6 +45,7 @@ func update_element():
 	if statusNode.visible:
 		tmp = "  -  " + description
 	descpNode.text = tmp
+	name = "Description" + tmp
 
 func add_block(block:Control):
 	childContainerNode.add_child.call_deferred(block)
