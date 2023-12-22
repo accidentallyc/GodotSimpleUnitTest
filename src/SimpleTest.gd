@@ -21,6 +21,10 @@ func expect_orphan_nodes(n):
 func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
 	
+## Call to force a test to fail. 
+func expect_fail(description = &"Forced failure invoked"):
+	__append_error(description)
+	
 ## Overrides the displayed test name. This is optional
 func test_name(override_test_name:String):
 	_override_test_name = override_test_name
@@ -41,6 +45,7 @@ func stub():
 """
 
 var _ln_item
+var _case_item
 var _results:Array[String]
 ## Only used for displaying purposes
 var _curr_test_name = null
