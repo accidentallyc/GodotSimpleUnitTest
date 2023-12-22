@@ -14,6 +14,7 @@ func _init(t:SimpleTest, v:):
 """
 var to = self
 var have = self
+var been = self
 var NOT:
 	get:
 		__flag_not_notted = false
@@ -28,13 +29,53 @@ func be(other, description = null):
 	return equal(other, description)	
 
 func equal(other, description = null):
-	var eqTypeStr = "STRICTLY" if __flag_strict else "loosely"
 	return test.__assert(
 		__to_notted(
 			LambdaOperations.equals_strict(value,other) if __flag_strict else LambdaOperations.equals(value,other)
 		),
 		description,
-		&"Expected %s(%s) to %s equal in %s(%s)" % [value,__type_to_str(typeof(value)),eqTypeStr,other,__type_to_str(typeof(other))]
+		&"Expected {v1}({t1}) to {equal} in {v2}({t2})".format({
+			&"v1":value,
+			&"v2":other,
+			&"t1":__type_to_str(typeof(value)),
+			&"t2":__type_to_str(typeof(other)),
+			&"equal": &"STRICTLY equal" if __flag_strict else &"loosely equal"
+		})
+	)
+	
+func called(description = null):
+	if not(value is SimpleTest_Stub):
+		return test.__append_error(
+			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % value
+		)
+		
+	var vStub = value as SimpleTest_Stub
+	return test.__assert(
+		__to_notted(
+			vStub.callstack.size() > 0
+		),
+		description,
+		&"Expected callback {to} have been called atleast once".format({
+			&"to": &"to" if __flag_not_notted else &"NOT to"
+		})
+	)
+	
+func called_n_times(n:int, description = null):
+	if not(value is SimpleTest_Stub):
+		return test.__append_error(
+			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % value
+		)
+		
+	var vStub = value as SimpleTest_Stub
+	return test.__assert(
+		__to_notted(
+			vStub.callstack.size() == n
+		),
+		description,
+		&"Expected stub {to} have been called {n} times".format({
+			&"to": &"to" if __flag_not_notted else &"NOT to",
+			&"n": n
+		})
 	)
 """
 /////////////////////////////

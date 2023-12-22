@@ -14,31 +14,7 @@ static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
 """
 func expect(value):
 	return SimpleTest_ExpectBuilder.new(self,value)
-
-func expect_been_called(spy:SimpleTest_Spy, description = null):
-	__assert( 
-		len(spy.callstack) > 0,
-		description,
-		&"Expected func to have been called atleast once"
-	)
-func expect_equal(a,b, description = null):
-	__assert(
-		LambdaOperations.equals(a,b),
-		description,
-		&"Expected %s(%s) to loosely equal in %s(%s)" % [a,__type_to_str(typeof(a)),b,__type_to_str(typeof(b))]
-	)
-
-func expect_equal_strict(a,b,description = null):
-	var result = LambdaOperations.equals_strict(a,b)
-	var typaA = typeof(a)
-	var typeB = typeof(b)
-	var addendum = " - types not matching" if typaA != typeB else ""
-	__assert(
-		LambdaOperations.equals_strict(a,b),
-		description,
-		&"Expected %s(%s) to STRICTLY equal %s(%s) %s" % [a,__type_to_str(typeof(a)),b,__type_to_str(typeof(b)),addendum]
-	)
-
+	
 func expect_orphan_nodes(n):
 	Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n
 	
@@ -46,13 +22,13 @@ func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
 
 """
-////////////////////////////
+//////////////////////////stub//
 // Some Utility Functions //
 ////////////////////////////
 """
 
-func spy():
-	return SimpleTest_Spy.new()
+func stub():
+	return SimpleTest_Stub.new()
 	
 """
 ////////////////////
@@ -138,6 +114,9 @@ func __get_test_cases():
 func __assert(result:bool, description, default):
 	if !result:
 		_results.append(description if description else default)
+		
+func __append_error(description):
+	_results.append(description)
 	
 static func __type_to_str(type:int):
 	match type:
