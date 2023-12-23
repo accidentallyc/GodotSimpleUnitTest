@@ -58,8 +58,10 @@ We mostly do things the fluent way. The following keywords are supported.
 | `are`  | Sugar only. Does nothing.
 | `will`  | Sugar only. Does nothing.
 | `NOT` | Inverts the results. Must be capitilized.
-|`strictly`| Equality checks are replaced with `is_same()`
+| `strictly`| Equality checks are replaced with `is_same()`
 | `equal` | Loosely compares the 2 values using `==`
+| `truthy` | Checks for truthiness using a ternary operator
+| `falsey` | Checks for falsiness using a ternary operator
 | `called` | Checks if a `stub` has been called atleast once
 | `called_n_times` | Checks if a `stub` has been called exactly `n` times
 
