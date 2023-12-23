@@ -34,7 +34,7 @@ func equal(other, description = null):
 			LambdaOperations.equals_strict(value,other) if __flag_strict else LambdaOperations.equals(value,other)
 		),
 		description,
-		&"Expected {v1}({t1}) to {not}{equal} in {v2}({t2})".format({
+		&"Expected {v1}({t1}) to {not}{equal} {v2}({t2})".format({
 			&"v1":value,
 			&"v2":other,
 			&"t1":__type_to_str(typeof(value)),
@@ -43,7 +43,7 @@ func equal(other, description = null):
 			&"not": &"" if __flag_not_notted else &"NOT ",
 		})
 	)
-	
+
 func called(description = null):
 	if not(value is SimpleTest_Stub):
 		return test.__append_error(

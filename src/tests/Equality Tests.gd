@@ -5,7 +5,7 @@ func test_foundation_test():
 	test_name("FOUNDATION TEST - make sure this passes")
 	expect(100).to.equal(999)
 	assert(
-		_results.size() > 0 && _results[0] == "Expected 100(int) to loosely equal in 999(int)",
+		_results.size() > 0 && _results[0] == "Expected 100(int) to loosely equal 999(int)",
 		"Canary test failed. All other tests should be considered fail."
 	)
 	
@@ -15,7 +15,7 @@ func test_foundation_test():
 func test_equals_fails_when_not_equal():
 	test_name("100 == 200 should FAIL")
 	try(func (): expect(100).to.equal(200))
-	expect_failure("Expected 100(int) to loosely equal in 200(int)")
+	expect_failure("Expected 100(int) to loosely equal 200(int)")
 	
 func test_NOT_inverts_the_fails_when_not_equal_test():
 	test_name("'NOT' 100 == 200 should pass")
@@ -46,12 +46,12 @@ func test_equals_passes_when_equal_but_diff_type():
 func test_strict_equals_checks_for_type():
 	test_name("equality between mismatching types should FAIL")
 	try(func (): expect(100).to.strictly.equal(100.0))
-	expect_failure("Expected 100(int) to STRICTLY equal in 100(float)")
+	expect_failure("Expected 100(int) to STRICTLY equal 100(float)")
 	
 func test_NOT_inverts_the_result():
 	test_name("'NOT' equality between mismatching types should pass")
 	try(func (): expect(100).to.NOT.equal(100))
-	expect_failure("Expected 100(int) to NOT loosely equal in 100(int)")
+	expect_failure("Expected 100(int) to NOT loosely equal 100(int)")
 	
 """
 ////////////////////
