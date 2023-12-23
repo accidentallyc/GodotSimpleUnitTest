@@ -10,7 +10,7 @@ It *doesn't* have any of the bells and whistles. Just the ability to run scenes 
 
 **why make this?**
 
-I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or G
+I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or GdUnit3
 
 ## Setup
 1. Import addon or clone this repo as a git submodule. 
@@ -34,12 +34,11 @@ I didn't want a very editor heavy plugin. I wanted something lightweight, simple
 extends SimpleTest
 
 func it_has_equality_tests():
-	expect(true).to.equal(true)
-	expect(true).to.NOT.equal(false)
+  expect(true).to.equal(true)
+  expect(true).to.NOT.equal(false)
 
-	expect([1,2,3]).to.equal([1,2,3])
-	expect([1,2,3]).to.NOT.strictly.equal([1,2,3])
-
+  expect([1,2,3]).to.equal([1,2,3])
+  expect([1,2,3]).to.NOT.strictly.equal([1,2,3])
   expect(1).equal(1, "Custom message at the end of every expect")
 ```
 
@@ -54,9 +53,12 @@ We mostly do things the fluent way. The following keywords are supported.
 | `to`  | Sugar only. Does nothing.
 | `have`  | Sugar only. Does nothing.
 | `been`  | Sugar only. Does nothing.
+| `be`  | Sugar only. Does nothing.
+| `IS`  | Sugar only. Does nothing.
+| `are`  | Sugar only. Does nothing.
+| `will`  | Sugar only. Does nothing.
 | `NOT` | Inverts the results. Must be capitilized.
 |`strictly`| Equality checks are replaced with `is_same()`
-| `be` | Strict version of `equal`|
 | `equal` | Loosely compares the 2 values using `==`
 | `called` | Checks if a `stub` has been called atleast once
 | `called_n_times` | Checks if a `stub` has been called exactly `n` times

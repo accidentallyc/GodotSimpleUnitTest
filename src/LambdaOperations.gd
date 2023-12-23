@@ -17,3 +17,6 @@ static func equals_strict(a,b):
 		return false
 
 	return  is_same(a,b)
+	
+static func truthy(a):
+	return true if a else false

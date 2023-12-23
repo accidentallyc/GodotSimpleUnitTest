@@ -15,6 +15,10 @@ func _init(t:SimpleTest, v:):
 var to = self
 var have = self
 var been = self
+var be = self
+var IS = self
+var are = self
+var will = self
 var NOT:
 	get:
 		__flag_not_notted = false
@@ -24,10 +28,10 @@ var strictly = self:
 		__flag_strict = true
 		return self
 
-func be(other, description = null):
-	__flag_strict = true
-	return equal(other, description)	
-
+## Compares 'a' and 'b' using the  == operator
+## When strict, it uses the is_same operator
+## Example 1: expect(1).to.equal(1)
+## Example 2: expect(1).to.strictly.equal(1)
 func equal(other, description = null):
 	return test.__assert(
 		__to_notted(
@@ -35,8 +39,8 @@ func equal(other, description = null):
 		),
 		description,
 		&"Expected {v1}({t1}) to {not}{equal} {v2}({t2})".format({
-			&"v1":value,
-			&"v2":other,
+			&"v1":str(value),
+			&"v2":str(other),
 			&"t1":__type_to_str(typeof(value)),
 			&"t2":__type_to_str(typeof(other)),
 			&"equal": &"STRICTLY equal" if __flag_strict else &"loosely equal",
@@ -44,10 +48,37 @@ func equal(other, description = null):
 		})
 	)
 
+## Checks if 'a' is truthy using a ternary operator
+## Example 1: expect(true).to.be.truthy()
+## Example 2: expect([1,2,3]).to.be.truthy()
+func truthy(description = null):
+	return test.__assert(
+		__to_notted(LambdaOperations.truthy(value)),
+		description,
+		&"Expected '{v1}' {to} be truthy".format({
+			&"v1": str(value),
+			&"to": &"to" if __flag_not_notted else &"to NOT",
+		})
+	)
+	
+## Checks if 'a' is falsey using a ternary operator
+## This has the same effect as NOT
+## Example 1: expect(true).to.be.falsey()
+## Example 2: expect([1,2,3]).to.be.falsey()
+func falsey(description = null):
+	return test.__assert(
+		__to_notted(not(LambdaOperations.truthy(value))),
+		description,
+		&"Expected '{v1}' {to} be falsey".format({
+			&"v1": str(value),
+			&"to": &"to" if __flag_not_notted else &"to NOT",
+		})
+	)
+
 func called(description = null):
 	if not(value is SimpleTest_Stub):
 		return test.__append_error(
-			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % value
+			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % str(value)
 		)
 		
 	var vStub = value as SimpleTest_Stub
