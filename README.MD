@@ -46,9 +46,10 @@ func it_has_equality_tests():
 ### Expect Functions
 ---------------------------------
 
-We mostly do things the fluent way. The following keywords are supported.
+We mostly do things the fluent way. The following keywords can be chained after
+an `expect` statement.
 
-| Keyword  | What |
+| Chainable Keyword  | What |
 | ------------- | -------------
 | `to`  | Sugar only. Does nothing.
 | `have`  | Sugar only. Does nothing.
@@ -59,11 +60,14 @@ We mostly do things the fluent way. The following keywords are supported.
 | `will`  | Sugar only. Does nothing.
 | `NOT` | Inverts the results. Must be capitilized.
 | `strictly`| Equality checks are replaced with `is_same()`
-| `equal` | Loosely compares the 2 values using `==`
-| `truthy` | Checks for truthiness using a ternary operator
-| `falsey` | Checks for falsiness using a ternary operator
-| `called` | Checks if a `stub` has been called atleast once
-| `called_n_times` | Checks if a `stub` has been called exactly `n` times
+
+| Function Keyword  | What |
+| ------------- | -------------
+| `equal(Variant)` | Loosely compares the 2 values using `==`
+| `truthy()` | Checks for truthiness using a ternary operator
+| `falsey()` | Checks for falsiness using a ternary operator
+| `called()` | Checks if a `stub` has been called atleast once
+| `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
 
 
