@@ -12,20 +12,20 @@ func _init(t:SimpleTest, v:):
 // FLUENT BUILDER KEYWORDS //
 /////////////////////////////
 """
-var to = self
-var have = self
-var been = self
-var be = self
-var IS = self
-var are = self
-var will = self
+var to := self
+var have := self
+var been := self
+var be := self
+var IS := self
+var are := self
+var will := self
 var NOT:
 	get:
 		__flag_not_notted = false
 		return self
 var strictly = self:
 	get:
-		__flag_strict = true
+		__equals = LambdaOperations.equals_strict
 		return self
 
 ## Compares 'a' and 'b' using the  == operator
@@ -33,17 +33,16 @@ var strictly = self:
 ## Example 1: expect(1).to.equal(1)
 ## Example 2: expect(1).to.strictly.equal(1)
 func equal(other, description = null):
+	var is_strict = is_same(__equals,LambdaOperations.equals_strict) 
 	return test.__assert(
-		__to_notted(
-			LambdaOperations.equals_strict(value,other) if __flag_strict else LambdaOperations.equals(value,other)
-		),
+		__to_notted(__equals.call(value,other)),
 		description,
 		&"Expected {v1}({t1}) to {not}{equal} {v2}({t2})".format({
 			&"v1":str(value),
 			&"v2":str(other),
 			&"t1":__type_to_str(typeof(value)),
 			&"t2":__type_to_str(typeof(other)),
-			&"equal": &"STRICTLY equal" if __flag_strict else &"loosely equal",
+			&"equal": &"STRICTLY equal" if is_strict else &"loosely equal",
 			&"not": &"" if __flag_not_notted else &"NOT ",
 		})
 	)
@@ -74,7 +73,7 @@ func falsey(description = null):
 			&"to": &"to" if __flag_not_notted else &"to NOT",
 		})
 	)
-
+	
 func called(description = null):
 	if not(value is SimpleTest_Stub):
 		return test.__append_error(
@@ -99,14 +98,14 @@ func called_n_times(n:int, description = null):
 		)
 		
 	var vStub = value as SimpleTest_Stub
+	var count = vStub.callstack.size()
 	return test.__assert(
-		__to_notted(
-			vStub.callstack.size() == n
-		),
+		__to_notted(count == n),
 		description,
-		&"Expected stub {to} have been called {n} times".format({
+		&"Expected stub {to} have been called {v1} times but got called {v2}".format({
 			&"to": &"to" if __flag_not_notted else &"NOT to",
-			&"n": n
+			&"v1": n,
+			&"v2": count
 		})
 	)
 """
@@ -114,10 +113,11 @@ func called_n_times(n:int, description = null):
 // INTERNAL STUFF //
 /////////////////////////////
 """
-var __flag_strict = false
 var __flag_not_notted = true
 func __to_notted(r:bool):
 	return r if __flag_not_notted else not(r)
+	
+var  __equals:Callable = LambdaOperations.equals
 	
 static func __type_to_str(type:int):
 	match type:

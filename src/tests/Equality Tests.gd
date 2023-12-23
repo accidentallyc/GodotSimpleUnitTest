@@ -90,6 +90,26 @@ func test_truthy():
 	assert_fail_message("Expected '[1, 2, 3]' to NOT be truthy")
 	assert_fail_message("Expected 'foobar' to NOT be truthy")
 	
+func test_stub_called_once():
+	var handle = stub()
+	try(func (): expect(handle).to.have.been.called())
+	assert_fail_message("Expected callback to have been called atleast once")
+	
+	handle.callable() # This should now pass
+	try(func (): expect(handle).to.have.been.called())
+	assert_passing()
+
+func test_stub_called_n_times():
+	var handle = stub()
+	try(func (): expect(handle).to.have.been.called_n_times(3))
+	assert_fail_message("Expected stub to have been called 3 times but got called 0")
+	
+	handle.callable() 
+	handle.callable() 
+	handle.callable() # This should now pass
+	try(func (): expect(handle).to.have.been.called_n_times(3))
+	assert_passing()
+		
 """
 ////////////////////
 // TEST UTILITIES //

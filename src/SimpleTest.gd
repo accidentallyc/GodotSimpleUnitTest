@@ -12,7 +12,7 @@ static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
 ## Expect Functions ##
 ######################
 """
-func expect(value):
+func expect(value)->SimpleTest_ExpectBuilder:
 	return SimpleTest_ExpectBuilder.new(self,value)
 	
 func expect_orphan_nodes(n):
