@@ -5,7 +5,7 @@ extends Node
 ## This cannot be run by itself
 class_name SimpleTest
 
-static var SimpleTest_LineItemTscn = preload("./ui/SimpleTest_LineItem.tscn")
+static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
 
 """
 ######################

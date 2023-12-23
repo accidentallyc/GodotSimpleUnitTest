@@ -9,7 +9,7 @@ class_name SimpleTest_Runner
 
 signal runner_ready(SimpleTest_Runner)
 
-static var SimpleTest_CanvasTscn = preload("./ui/SimpleTest_Canvas.tscn")
+static var SimpleTest_CanvasTscn = preload("./ui/simpletest_canvas.tscn")
 
 """
 #########################
@@ -19,11 +19,13 @@ static var SimpleTest_CanvasTscn = preload("./ui/SimpleTest_Canvas.tscn")
 func _enter_tree():
 	child_entered_tree.connect(func(_dummy): update_configuration_warnings())
 
+
 func _get_configuration_warnings():
 	if !(owner == null or owner == self):
 		return ["SimpleTest_Runner must be a root node"]
 	else:
 		return []
+
 
 var _canvas:SimpleTest_Canvas
 
@@ -32,6 +34,7 @@ func _ready():
 	_canvas = SimpleTest_CanvasTscn.instantiate()
 	_canvas.ready.connect(func(): runner_ready.emit(self))
 	add_child(_canvas)
+	
 	
 func add_block(block:Control):
 	_canvas.add_block.call_deferred(block)
