@@ -4,9 +4,9 @@ A very simple unit testing framework.
 
 It *doesn't* have any of the bells and whistles. Just the ability to run scenes as tests.
 
-![Sample Test Screenshot](./docs/sample-test.png)
+![Sample Test Screenshot](./addons/godot_simple_test/docs/sample-test.png)
 
-![Sample Setup Screenshot](./docs/sample-setup.png)
+![Sample Setup Screenshot](./addons/godot_simple_test/docs/sample-setup.png)
 
 **why make this?**
 
