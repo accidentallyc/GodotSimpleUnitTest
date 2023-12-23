@@ -13,9 +13,7 @@ It *doesn't* have any of the bells and whistles. Just the ability to run scenes 
 I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or GdUnit3
 
 ## Setup
-1. Import addon or clone this repo as a git submodule. 
-
-    `git submodule add https://github.com/accidentallyc/godot_simple_test.git addons/godot_simple_test`
+1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_test`
 1. Activate plugin via `Project > Project Settings > Plugins > SimpleUnitTest - [] Enable`
 1. **Create a new scene** that has `SimpleTest_Runner` node as root
 1. **Create a new script** that extends `SimpleTest`
