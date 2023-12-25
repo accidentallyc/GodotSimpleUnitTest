@@ -40,6 +40,9 @@ func update_element():
 		&"SKIPPED":
 			statusNode.modulate = Color.MAGENTA
 			statusNode.show()
+		&"IMPLIED SKIP":
+			statusNode.modulate = Color.MAGENTA
+			statusNode.show()
 		_:
 			statusNode.hide()
 		

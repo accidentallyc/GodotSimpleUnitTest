@@ -99,8 +99,16 @@ func _after_each():
 func __on_runner_ready(runner:SimpleTest_Runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
 	_ln_item.description = name
+	
+	var implicit_skip = false
+	# If there are solo scripts
+	if runner._solo_scripts:
+		implicit_skip = not(self in runner._solo_scripts)
 	if skip:
 		_ln_item.status = &"SKIPPED"
+		_ln_item.description = name
+	elif implicit_skip:
+		_ln_item.status = &"IMPLIED SKIP"
 		_ln_item.description = name
 	else:
 		_ln_item.status = &"PASS"
@@ -108,6 +116,7 @@ func __on_runner_ready(runner:SimpleTest_Runner):
 	
 	_runner = runner
 	_runner.add_block(_ln_item)
+	
 	
 var __run_state:Run_State
 func __set_run_state(expected_count:int):
