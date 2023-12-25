@@ -35,6 +35,5 @@ func _ready():
 	_canvas.ready.connect(func(): runner_ready.emit(self))
 	add_child(_canvas)
 	
-	
 func add_block(block:Control):
 	_canvas.add_block.call_deferred(block)

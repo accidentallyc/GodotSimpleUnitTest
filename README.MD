@@ -68,6 +68,16 @@ an `expect` statement.
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
 
+### Hooks
+
+You can override these functions
+
+| Func  | What |
+| ------------- | -------------
+| `_before():`  | Called once before any of the tests in the suite are begun
+| `_before_each():`  | Called before each test
+| `_after_each():`  | Called after each test
+| `_after():`  | Called after all of the tests in the suite are done
 
 
 ### Test Utility Methods

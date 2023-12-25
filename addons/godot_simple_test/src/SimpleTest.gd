@@ -15,11 +15,14 @@ static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
 func expect(value)->SimpleTest_ExpectBuilder:
 	return SimpleTest_ExpectBuilder.new(self,value)
 	
+	
 func expect_orphan_nodes(n):
 	Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n
 	
+	
 func expect_no_orphan_nodes():
 	expect_orphan_nodes(0)
+	
 	
 ## Call to force a test to fail. 
 func expect_fail(description = &"Forced failure invoked"):
@@ -27,7 +30,7 @@ func expect_fail(description = &"Forced failure invoked"):
 	
 ## Overrides the displayed test name. This is optional
 func test_name(override_test_name:String):
-	_override_test_name = override_test_name
+	__run_state.transient.override_test_name = override_test_name
 
 """
 //////////////////////////stub//
@@ -43,13 +46,21 @@ func stub():
 // Internal Stuff //
 ////////////////////
 """
+class Run_State:
+	var completed_count:int = 0
+	var expected_count:int = 0
+	var transient = Run_State_Transient.new()
+
+
+class Run_State_Transient:
+	var override_test_name:String = &""
+
 
 var _ln_item
 var _case_item
 var _results:Array[String]
 ## Only used for displaying purposes
 var _curr_test_name = null
-var _override_test_name = null
 var _test_case_line_item_map = {}
 var _runner
 
@@ -58,6 +69,26 @@ NOTE: This _has_ to be overriden by runner
 """
 func _ready():
 	owner.runner_ready.connect(__on_runner_ready,Object.CONNECT_ONE_SHOT)
+	
+	
+## Override to run code before any of the tests in this suite
+func _before():
+	pass
+	
+	
+func _before_each():
+	pass
+	
+	
+## Override to run code after each test case
+func _after():
+	pass
+	
+	
+## Override to run code after all the tests have been run
+func _after_each():
+	pass
+	
 
 func __on_runner_ready(runner:SimpleTest_Runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
@@ -67,6 +98,12 @@ func __on_runner_ready(runner:SimpleTest_Runner):
 	
 	_runner = runner
 	_runner.add_block(_ln_item)
+	
+var __run_state:Run_State
+func __set_run_state(expected_count:int):
+	__run_state = Run_State.new()
+	__run_state.expected_count = expected_count
+
 
 func __on_main_line_item_ready():
 	_ln_item.rerunButton.show()
@@ -74,6 +111,7 @@ func __on_main_line_item_ready():
 	_ln_item.rerunButton.__test = self
 	
 	var cases = __get_test_cases()
+	__set_run_state(cases.size())
 	for case in cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
 		_test_case_line_item_map[case.fn] = case_ln_item
@@ -95,13 +133,31 @@ func __run_test(method_name, ln_item):
 	
 	# Only used for debugging purposes
 	_curr_test_name = method_name
+
 		
-	# Perform the test
+	"""
+	Perform the actual test
+	"""
+	if __run_state.completed_count == 0:
+		_before()
+		
+	_before_each()
+	
 	self.call(method_name)
+	__run_state.completed_count += 1
+	
+	_after_each()
+	if __run_state.completed_count == __run_state.expected_count:
+		_after()
+		
+	"""
+	Update the GUI elements. The results of the test are collected at
+	_results.
+	"""
 	
 	# Update the actual text element
-	if _override_test_name:
-		ln_item.description = _override_test_name
+	if __run_state.transient.override_test_name:
+		ln_item.description = __run_state.transient.override_test_name
 	
 	# Update the pass - fail
 	ln_item.status = &"FAIL" if len(_results) > 0 else &"PASS"
@@ -111,8 +167,15 @@ func __run_test(method_name, ln_item):
 		f_line_item.description = f
 		ln_item.add_block(f_line_item)
 		
-	_override_test_name = null
+	"""
+	Cleanup for the next test run
+	"""
+	__run_state.transient.override_test_name = &""
 	_curr_test_name = null
+	
+func __run_single_test(method_name,ln_item):
+	__set_run_state(1)
+	__run_test(method_name,ln_item)
 	
 func __run_all_tests():
 	_ln_item.queue_free()
@@ -121,19 +184,18 @@ func __run_all_tests():
 func __get_test_cases():
 	var cases = []
 	for entry in get_method_list():
-		if entry.flags != METHOD_FLAG_NORMAL \
-			|| !( \
-				entry.name.begins_with(&"it") \
-				|| entry.name.begins_with(&"should") \
-				|| entry.name.begins_with(&"test") \
-			) \
-			or entry.name == 'test_name':
-			continue
-			
-		var case = {}
-		case.name = entry.name.replace(&"_",&" ")
-		case.fn = entry.name
-		cases.append(case)
+		var entry_name = entry.name
+		if entry.flags == METHOD_FLAG_NORMAL \
+				and entry_name != &"test_name" \
+				and ( \
+					entry_name.begins_with(&"it") \
+					or entry_name.begins_with(&"should") \
+					or entry_name.begins_with(&"test") \
+				):
+				var case = {}
+				case.name = entry.name.replace(&"_",&" ")
+				case.fn = entry.name
+				cases.append(case)
 	return cases
 
 func __assert(result:bool, description, default):

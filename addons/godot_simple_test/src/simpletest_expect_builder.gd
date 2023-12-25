@@ -32,7 +32,7 @@ var strictly = self:
 ## When strict, it uses the is_same operator
 ## Example 1: expect(1).to.equal(1)
 ## Example 2: expect(1).to.strictly.equal(1)
-func equal(other, description = null):
+func equal(other, description: String = &""):
 	var is_strict = is_same(__equals,LambdaOperations.equals_strict) 
 	return test.__assert(
 		__to_notted(__equals.call(value,other)),
@@ -50,7 +50,7 @@ func equal(other, description = null):
 ## Checks if 'a' is truthy using a ternary operator
 ## Example 1: expect(true).to.be.truthy()
 ## Example 2: expect([1,2,3]).to.be.truthy()
-func truthy(description = null):
+func truthy(description: String = &""):
 	return test.__assert(
 		__to_notted(LambdaOperations.truthy(value)),
 		description,
@@ -64,7 +64,7 @@ func truthy(description = null):
 ## This has the same effect as NOT
 ## Example 1: expect(true).to.be.falsey()
 ## Example 2: expect([1,2,3]).to.be.falsey()
-func falsey(description = null):
+func falsey(description: String = &""):
 	return test.__assert(
 		__to_notted(not(LambdaOperations.truthy(value))),
 		description,
@@ -74,7 +74,7 @@ func falsey(description = null):
 		})
 	)
 	
-func called(description = null):
+func called(description: String = &""):
 	if not(value is SimpleTest_Stub):
 		return test.__append_error(
 			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % str(value)
@@ -91,7 +91,7 @@ func called(description = null):
 		})
 	)
 	
-func called_n_times(n:int, description = null):
+func called_n_times(n:int, description: String = &""):
 	if not(value is SimpleTest_Stub):
 		return test.__append_error(
 			&"'called' expected a stub but got '%s' instead. Use the stub() to make one" % value
