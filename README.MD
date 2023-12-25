@@ -68,7 +68,7 @@ an `expect` statement.
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
 
-### Hooks
+### Hooks (v0.0.3)
 
 You can override these functions
 
