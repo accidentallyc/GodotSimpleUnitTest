@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://wdt7rsd64ks2"]
+
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_drliy"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest.gd" id="2_hnafn"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_test_1.gd" id="2_m1tyu"]
+
+[node name="UnitTestsSoloTests" type="Node"]
+script = ExtResource("1_drliy")
+
+[node name="[measure] this should be ignored 1" type="Node" parent="."]
+script = ExtResource("2_hnafn")
+
+[node name="Solo Test 1" type="Node" parent="."]
+script = ExtResource("2_m1tyu")

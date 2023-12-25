@@ -7,6 +7,12 @@ class_name SimpleTest
 
 static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
 
+## Runs this test only
+@export var solo:bool = false
+
+## Skips this test
+@export var skip:bool = false
+
 """
 ######################
 ## Expect Functions ##
@@ -92,9 +98,13 @@ func _after_each():
 
 func __on_runner_ready(runner:SimpleTest_Runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
-	_ln_item.status = &"PASS"
 	_ln_item.description = name
-	_ln_item.ready.connect(__on_main_line_item_ready, Object.CONNECT_ONE_SHOT)
+	if skip:
+		_ln_item.status = &"SKIPPED"
+		_ln_item.description = name
+	else:
+		_ln_item.status = &"PASS"
+		_ln_item.ready.connect(__on_main_line_item_ready, Object.CONNECT_ONE_SHOT)
 	
 	_runner = runner
 	_runner.add_block(_ln_item)

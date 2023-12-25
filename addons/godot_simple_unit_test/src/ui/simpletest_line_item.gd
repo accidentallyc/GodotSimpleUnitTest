@@ -37,6 +37,9 @@ func update_element():
 		&"PASS":
 			statusNode.modulate = Color.GREEN
 			statusNode.show()
+		&"SKIPPED":
+			statusNode.modulate = Color.MAGENTA
+			statusNode.show()
 		_:
 			statusNode.hide()
 		
