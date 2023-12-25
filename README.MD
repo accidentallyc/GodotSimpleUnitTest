@@ -4,16 +4,16 @@ A very simple unit testing framework.
 
 It *doesn't* have any of the bells and whistles. Just the ability to run scenes as tests.
 
-![Sample Test Screenshot](./addons/godot_simple_test/docs/sample-test.png)
+![Sample Test Screenshot](./addons/godot_simple_unit_test/docs/sample-test.png)
 
-![Sample Setup Screenshot](./addons/godot_simple_test/docs/sample-setup.png)
+![Sample Setup Screenshot](./addons/godot_simple_unit_test/docs/sample-setup.png)
 
 **why make this?**
 
 I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or GdUnit3
 
 ## Setup
-1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_test`
+1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_unit_test`
 1. Activate plugin via `Project > Project Settings > Plugins > SimpleUnitTest - [] Enable`
 1. **Create a new scene** that has `SimpleTest_Runner` node as root
 1. **Create a new script** that extends `SimpleTest`

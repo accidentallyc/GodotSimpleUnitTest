@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 func _enter_tree():
-	var expected_path = "res://addons/godot_simple_test"
+	var expected_path = "res://addons/godot_simple_unit_test"
 	var dir = DirAccess.open(expected_path)
 	
 	if dir:

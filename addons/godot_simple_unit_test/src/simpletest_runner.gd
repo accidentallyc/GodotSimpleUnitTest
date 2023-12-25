@@ -1,4 +1,4 @@
-@icon("res://addons/godot_simple_test/src/ui/icon_runner.png")
+@icon("res://addons/godot_simple_unit_test/src/ui/icon_runner.png")
 
 @tool
 extends SimpleTest
@@ -9,7 +9,7 @@ class_name SimpleTest_Runner
 
 signal runner_ready(SimpleTest_Runner)
 
-static var SimpleTest_CanvasTscn = preload("./ui/simpletest_canvas.tscn")
+static var SimpleTest_CanvasTscn := preload("./ui/simpletest_canvas.tscn")
 
 """
 #########################
@@ -27,7 +27,7 @@ func _get_configuration_warnings():
 		return []
 
 
-var _canvas:SimpleTest_Canvas
+var _canvas
 
 func _ready():
 	var children = get_children()

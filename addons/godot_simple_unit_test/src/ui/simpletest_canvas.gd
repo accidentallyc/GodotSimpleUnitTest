@@ -1,7 +1,5 @@
 extends CanvasLayer
 
-class_name SimpleTest_Canvas
-
 @export var container:Container
 
 func add_block(block:Control):
