@@ -7,25 +7,26 @@
 
 [node name="UnitTestsSoloTests" type="Node"]
 script = ExtResource("1_drliy")
+solo_suite = null
+skip_suite = null
 
 [node name="[measure] this should be ignored 1 (IMPLICIT)" type="Node" parent="."]
 script = ExtResource("2_lna4i")
 
 [node name="[measure] this should be visible since its SOLO 1" type="Node" parent="."]
 script = ExtResource("4_m3vj6")
-solo = true
+solo_suite = true
 
 [node name="[measure] this should be ignored 2 (IMPLICIT)" type="Node" parent="."]
 script = ExtResource("2_lna4i")
 
 [node name="[measure] this should be visible since its SOLO 2" type="Node" parent="."]
 script = ExtResource("4_m3vj6")
-solo = true
+solo_suite = true
 
 [node name="[measure] this should be ignored EXPLICIT" type="Node" parent="."]
 script = ExtResource("2_lna4i")
-solo = true
-skip = true
+skip_suite = true
 
 [node name="Actual Skip Test (done by reading tree)" type="Node" parent="." node_paths=PackedStringArray("implict_skip_1", "implict_skip_2", "explict_skip", "solo_1", "solo_2")]
 script = ExtResource("2_m1tyu")
@@ -34,4 +35,4 @@ implict_skip_2 = NodePath("../[measure] this should be ignored 2 (IMPLICIT)")
 explict_skip = NodePath("../[measure] this should be ignored EXPLICIT")
 solo_1 = NodePath("../[measure] this should be visible since its SOLO 1")
 solo_2 = NodePath("../[measure] this should be visible since its SOLO 2")
-solo = true
+solo_suite = true

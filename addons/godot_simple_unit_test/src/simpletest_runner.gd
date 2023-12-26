@@ -45,7 +45,7 @@ func _find_tests(node:Node):
 		_find_tests(child)
 			
 	var test = node as SimpleTest
-	if test and test.solo:
+	if test and test.solo_suite:
 		_solo_scripts.append(node)
 	
 func add_block(block:Control):

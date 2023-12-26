@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://126377pd71p8"]
+[gd_scene load_steps=9 format=3 uid="uid://126377pd71p8"]
 
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_yxyqd"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/foundation_tests.gd" id="2_g8a6l"]
@@ -7,9 +7,12 @@
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/after_test.gd" id="5_ft831"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/skip_test_measure.gd" id="6_0p0st"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/skip_test.gd" id="7_eoxb6"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_case_test.gd" id="8_6fd8n"]
 
 [node name="SimpleTests\' Own Unit Test" type="Node"]
 script = ExtResource("1_yxyqd")
+solo_suite = null
+skip_suite = null
 
 [node name="Foundation Tests" type="Node" parent="."]
 script = ExtResource("2_g8a6l")
@@ -23,12 +26,15 @@ script = ExtResource("4_1cf1u")
 [node name="After Test" type="Node" parent="."]
 script = ExtResource("5_ft831")
 
-[node name="GUI Tests" type="Node" parent="."]
+[node name="Solo and Skip Tests" type="Node" parent="."]
 
-[node name="[measure] This test should be skipped" type="Node" parent="GUI Tests"]
+[node name="[measure] This test should be skipped" type="Node" parent="Solo and Skip Tests"]
 script = ExtResource("6_0p0st")
-skip = true
+skip_suite = true
 
-[node name="Skip Test" type="Node" parent="GUI Tests" node_paths=PackedStringArray("skip_test_measure")]
+[node name="Skip Test" type="Node" parent="Solo and Skip Tests" node_paths=PackedStringArray("skip_test_measure")]
 script = ExtResource("7_eoxb6")
 skip_test_measure = NodePath("../[measure] This test should be skipped")
+
+[node name="Solo Case Test" type="Node" parent="Solo and Skip Tests"]
+script = ExtResource("8_6fd8n")

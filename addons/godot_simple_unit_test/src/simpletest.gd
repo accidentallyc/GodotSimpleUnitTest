@@ -8,10 +8,10 @@ class_name SimpleTest
 static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
 
 ## Runs this test only
-@export var solo:bool = false
+@export var solo_suite:bool = false
 
 ## Skips this test
-@export var skip:bool = false
+@export var skip_suite:bool = false
 
 """
 ######################
@@ -37,7 +37,8 @@ func expect_fail(description = &"Forced failure invoked"):
 ## Overrides the displayed test name. This is optional
 func test_name(override_test_name:String):
 	__run_state.transient.override_test_name = override_test_name
-
+	
+	
 """
 //////////////////////////stub//
 // Some Utility Functions //
@@ -104,7 +105,7 @@ func __on_runner_ready(runner:SimpleTest_Runner):
 	# If there are solo scripts
 	if runner._solo_scripts:
 		implicit_skip = not(self in runner._solo_scripts)
-	if skip:
+	if skip_suite:
 		_ln_item.status = &"SKIPPED"
 		_ln_item.description = name
 	elif implicit_skip:

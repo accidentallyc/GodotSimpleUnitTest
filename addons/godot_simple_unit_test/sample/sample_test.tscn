@@ -6,6 +6,8 @@
 
 [node name="Sample Test" type="Node"]
 script = ExtResource("1_yi6wn")
+solo_suite = null
+skip_suite = null
 
 [node name="Test Suite 1" type="Node" parent="."]
 script = ExtResource("2_ou246")
