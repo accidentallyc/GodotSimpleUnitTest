@@ -38,3 +38,4 @@ skip_test_measure = NodePath("../[measure] This test should be skipped")
 
 [node name="Solo Case Test" type="Node" parent="Solo and Skip Tests"]
 script = ExtResource("8_6fd8n")
+solo_suite = true

@@ -37,8 +37,7 @@ func expect_fail(description = &"Forced failure invoked"):
 ## Overrides the displayed test name. This is optional
 func test_name(override_test_name:String):
 	__run_state.transient.override_test_name = override_test_name
-	
-	
+
 """
 //////////////////////////stub//
 // Some Utility Functions //
