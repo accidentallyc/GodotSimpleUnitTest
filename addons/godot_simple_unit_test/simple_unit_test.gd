@@ -10,3 +10,11 @@ func _enter_tree():
 	else:
 		printerr("Warning, SimpleTest folder should reside at ",expected_path,". This will break a few things")
 
+
+func _apply_changes():
+	call_deferred("_rebuild_all_nodes")
+	
+	
+func _rebuild_all_nodes():
+	var root_scene = EditorInterface.get_edited_scene_root()
+	SimpleTest_Utils.scan_and_rebuild_all_test_cases(root_scene)

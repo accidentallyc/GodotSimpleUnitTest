@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://wdt7rsd64ks2"]
 
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_drliy"]
-[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/skip_test_measure.gd" id="2_lna4i"]
-[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_test.gd" id="2_m1tyu"]
-[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_test_measure.gd" id="4_m3vj6"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/unit_tests/skip_test_measure.gd" id="2_lna4i"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_test/solo_test.gd" id="2_m1tyu"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo_test/solo_test_measure.gd" id="4_m3vj6"]
 
 [node name="UnitTestsSoloTests" type="Node"]
 script = ExtResource("1_drliy")

@@ -73,10 +73,14 @@ var _runner
 """
 NOTE: This _has_ to be overriden by runner
 """
+func _enter_tree():
+	print("foobar")
+
+
 func _ready():
 	owner.runner_ready.connect(__on_runner_ready,Object.CONNECT_ONE_SHOT)
-	
-	
+
+
 ## Override to run code before any of the tests in this suite
 func _before():
 	pass
@@ -129,7 +133,7 @@ func __on_main_line_item_ready():
 	_ln_item.rerunButton.__method_name = "__run_all_tests"
 	_ln_item.rerunButton.__test = self
 	
-	var cases = __get_test_cases()
+	var cases = SimpleTest_Utils.get_test_cases(self)
 	__set_run_state(cases.size())
 	for case in cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
@@ -199,23 +203,7 @@ func __run_single_test(method_name,ln_item):
 func __run_all_tests():
 	_ln_item.queue_free()
 	__on_runner_ready(_runner)
-	
-func __get_test_cases():
-	var cases = []
-	for entry in get_method_list():
-		var entry_name = entry.name
-		if entry.flags == METHOD_FLAG_NORMAL \
-				and entry_name != &"test_name" \
-				and ( \
-					entry_name.begins_with(&"it") \
-					or entry_name.begins_with(&"should") \
-					or entry_name.begins_with(&"test") \
-				):
-				var case = {}
-				case.name = entry.name.replace(&"_",&" ")
-				case.fn = entry.name
-				cases.append(case)
-	return cases
+
 
 func __assert(result:bool, description, default):
 	if !result:
@@ -223,6 +211,7 @@ func __assert(result:bool, description, default):
 		
 func __append_error(description):
 	_results.append(description)
+	
 	
 static func __type_to_str(type:int):
 	match type:

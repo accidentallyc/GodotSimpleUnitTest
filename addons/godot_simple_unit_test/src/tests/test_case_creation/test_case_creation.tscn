@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjc3jhnmvg18f"]
+
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_4ssfm"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/test_case_creation/test_case_nodes_test.gd" id="2_atlg8"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_case.gd" id="3_uedf1"]
+
+[node name="TestCaseCreation" type="Node"]
+script = ExtResource("1_4ssfm")
+
+[node name="Test Case Nodes Test" type="Node" parent="."]
+script = ExtResource("2_atlg8")
+
+[node name="should be a test case for every node" type="Node" parent="Test Case Nodes Test"]
+script = ExtResource("3_uedf1")
+method_name = "should_be_a_test_case_for_every_node"
+
+[node name="should not recreate test cases more than once" type="Node" parent="Test Case Nodes Test"]
+script = ExtResource("3_uedf1")
+method_name = "should_not_recreate_test_cases_more_than_once"
+
+[node name="it test case measure" type="Node" parent="Test Case Nodes Test"]
+script = ExtResource("3_uedf1")
+method_name = "it_test_case_measure"

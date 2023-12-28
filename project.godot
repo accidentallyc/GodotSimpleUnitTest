@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Gd-simple-tests"
-run/main_scene="res://addons/godot_simple_unit_test/src/tests/unit_tests.tscn"
+run/main_scene="res://addons/godot_simple_unit_test/src/tests/unit_tests/unit_tests.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
