@@ -12,7 +12,7 @@ func it_can_find_first_truthy():
 
 
 func it_can_find_first_lambda():
-	var result = GD__.find(users, func(u): return u.age < 40)
+	var result = GD__.find(users, func(u, _i): return u.age < 40)
 	expect(result).to.equal(barney)
 
 

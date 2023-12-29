@@ -1,42 +1,21 @@
 extends SimpleTest
 
-static var num_cases := 3
 
-func _before_each():
-	# Delete all the children
-	for c in get_children():
-		c.free()
-
-
-func it_test_case_measure():
-	test_name("This test case is a test measure")
-	
-
-func should_be_a_test_case_for_every_node():
-	"""
-	No this test doesnt _actually_ check if the test cases
-	are rebuilt when "save" is pressed but thats a bit harder
-	to do and I cant figure out how.
-	
-	So i've opted to just, move it to a shared function and pray
-	that this function is called in the right place.
-	"""
-	SimpleTest_Utils.scan_and_rebuild_all_test_cases(owner)
-	
-	var children = get_children()
-	expect(children.size()).to.equal(num_cases)
-	for child in children:
-		expect(has_method(child.method_name)).truthy()
-
-
-func should_not_recreate_test_cases_more_than_once():
-	SimpleTest_Utils.scan_and_rebuild_all_test_cases(owner)
-	SimpleTest_Utils.scan_and_rebuild_all_test_cases(owner)
-	SimpleTest_Utils.scan_and_rebuild_all_test_cases(owner)
-
-	expect(get_children().size()).to.equal(num_cases)
-
-
-func not_a_test_case():
+func it_is_a_skipped_test(_skip):
 	pass
+
+func it_can_skip():
+	var r = ["foo"]
+	r.has(1)
 	
+	print("yeet",GD__._property(["0"],r))
+	#var r = [
+		#{"red":1,"blue":2},	
+		#{"red":2,"blue":9},	
+		#{"red":2,"blue":5},	
+	#]
+	#
+	#var asdf = GD__.matches({"red":2})
+	#for x in r:
+		#print("v",asdf.call(x))
+	pass

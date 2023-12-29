@@ -23,6 +23,8 @@ var description = &"":
 
 var _is_ready = false
 var parent_ln_item
+var case
+
 func _ready():
 	update_element()
 	_is_ready = true

@@ -24,7 +24,7 @@ static func name_to_method_name(namestr):
 
 func _get_property_list():
 	var cases = SimpleTest_Utils.get_test_cases(get_parent())
-	var test_cases = &",".join( GD_.map(cases,"fn") )
+	var test_cases = &",".join( GD__.map(cases,"fn") )
 	
 	return [
 		{

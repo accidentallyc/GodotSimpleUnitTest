@@ -14,7 +14,6 @@ static var SimpleTest_CanvasTscn := preload("./ui/simpletest_canvas.tscn")
 var _canvas
 
 func _ready():
-	_find_all_solo_scripts()
 	_canvas = SimpleTest_CanvasTscn.instantiate()
 	_canvas.ready.connect(func (): runner_ready.emit(self))
 	add_child(_canvas)
@@ -34,19 +33,6 @@ func _get_configuration_warnings():
 		return ["SimpleTest_Runner must be a root node"]
 	else:
 		return []
-
-var _solo_scripts:Array[Node]
-func _find_all_solo_scripts():
-	_solo_scripts = []
-	_find_tests(self)
-	
-func _find_tests(node:Node):
-	for child in node.get_children():
-		_find_tests(child)
-			
-	var test = node as SimpleTest
-	if test and test.solo_suite:
-		_solo_scripts.append(node)
 	
 func add_block(block:Control):
 	_canvas.add_block.call_deferred(block)

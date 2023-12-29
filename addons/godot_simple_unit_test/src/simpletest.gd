@@ -7,11 +7,6 @@ class_name SimpleTest
 
 static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
 
-## Runs this test only
-@export var solo_suite:bool = false
-
-## Skips this test
-@export var skip_suite:bool = false
 
 """
 ######################
@@ -74,7 +69,7 @@ var _runner
 NOTE: This _has_ to be overriden by runner
 """
 func _enter_tree():
-	print("foobar")
+	pass
 
 
 func _ready():
@@ -103,20 +98,9 @@ func _after_each():
 func __on_runner_ready(runner:SimpleTest_Runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
 	_ln_item.description = name
-	
-	var implicit_skip = false
-	# If there are solo scripts
-	if runner._solo_scripts:
-		implicit_skip = not(self in runner._solo_scripts)
-	if skip_suite:
-		_ln_item.status = &"SKIPPED"
-		_ln_item.description = name
-	elif implicit_skip:
-		_ln_item.status = &"IMPLIED SKIP"
-		_ln_item.description = name
-	else:
-		_ln_item.status = &"PASS"
-		_ln_item.ready.connect(__on_main_line_item_ready, Object.CONNECT_ONE_SHOT)
+
+	_ln_item.status = &"PASS"
+	_ln_item.ready.connect(__on_main_line_item_ready, Object.CONNECT_ONE_SHOT)
 	
 	_runner = runner
 	_runner.add_block(_ln_item)
@@ -139,23 +123,34 @@ func __on_main_line_item_ready():
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
 		_test_case_line_item_map[case.fn] = case_ln_item
 		
+		case_ln_item.case = case
 		case_ln_item.description = case.name
 		case_ln_item.ready.connect(
 			func(): 
 				case_ln_item.rerunButton.show()
 				case_ln_item.rerunButton.__method_name = case.fn
 				case_ln_item.rerunButton.__test = self
-				__run_test(case.fn, case_ln_item)
+				__run_test(case, case_ln_item)
 		, Object.CONNECT_ONE_SHOT)
 		
 		_ln_item.add_block(case_ln_item)
+		
+func __run_test(case, ln_item):
+	__run_test_run(case, ln_item)
+	
+func __run_test_skip(case, ln_item):
+	pass
 			
-func __run_test(method_name, ln_item):
+func __run_test_run(case, ln_item):
+	var method_name = case.fn
 	# Reset all errors
 	_results = []
 	
 	# Only used for debugging purposes
 	_curr_test_name = method_name
+	
+	if case.skipped:
+		print("This is skipped ",case)
 
 		
 	"""
@@ -166,7 +161,18 @@ func __run_test(method_name, ln_item):
 		
 	_before_each()
 	
-	self.call(method_name)
+	var args = []
+	
+	for arg in GD__.cast_array(case.args):
+		match arg.name:
+			"_skip":
+				args.append(null)
+				pass
+			_:
+				args.append(null)				
+				printerr("Unsupported paramter %s " % arg.name)
+	
+	self.callv(method_name, args)
 	__run_state.completed_count += 1
 	
 	_after_each()
@@ -196,9 +202,11 @@ func __run_test(method_name, ln_item):
 	__run_state.transient.override_test_name = &""
 	_curr_test_name = null
 	
+	
 func __run_single_test(method_name,ln_item):
 	__set_run_state(1)
 	__run_test(method_name,ln_item)
+	
 	
 func __run_all_tests():
 	_ln_item.queue_free()
@@ -208,6 +216,7 @@ func __run_all_tests():
 func __assert(result:bool, description, default):
 	if !result:
 		_results.append(description if description else default)
+		
 		
 func __append_error(description):
 	_results.append(description)

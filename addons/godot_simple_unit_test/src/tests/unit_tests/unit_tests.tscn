@@ -27,7 +27,6 @@ script = ExtResource("5_ft831")
 
 [node name="[measure] This test should be skipped" type="Node" parent="Solo and Skip Tests"]
 script = ExtResource("6_0p0st")
-skip_suite = true
 
 [node name="Skip Test" type="Node" parent="Solo and Skip Tests" node_paths=PackedStringArray("skip_test_measure")]
 script = ExtResource("7_eoxb6")

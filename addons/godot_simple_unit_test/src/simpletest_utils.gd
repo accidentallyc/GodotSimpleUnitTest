@@ -1,5 +1,6 @@
 class_name SimpleTest_Utils
 
+
 static func get_test_cases(script):
 	var cases = []
 	for entry in script.get_method_list():
@@ -14,6 +15,9 @@ static func get_test_cases(script):
 				var case = {}
 				case.name = entry.name.replace(&"_",&" ")
 				case.fn = entry.name
+				case.args = entry.args
+				
+				case.skipped = true if GD__.find(entry.args, {"name":"_skip"}) else false
 				cases.append(case)
 	return cases
 	
@@ -33,7 +37,7 @@ static func _saratc_rebuild_test_cases(t:SimpleTest, test_runner:Node):
 	var test = t as SimpleTest
 	
 	var cases = SimpleTest_Utils.get_test_cases(test)
-	var test_cases = GD_.map(cases,"fn")
+	var test_cases = GD__.map(cases,"fn")
 
 	# Remove the nodes already existing from the test_case list
 	# and if a non-existent method (aka a deleted test or renamed) then
