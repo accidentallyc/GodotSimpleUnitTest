@@ -119,6 +119,7 @@ func __on_main_line_item_ready():
 	
 	var cases = SimpleTest_Utils.get_test_cases(self)
 	__set_run_state(cases.size())
+	
 	for case in cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
 		_test_case_line_item_map[case.fn] = case_ln_item
@@ -137,18 +138,48 @@ func __on_main_line_item_ready():
 		_ln_item.add_block(case_ln_item)
 		
 func __run_test(case, ln_item):
+	"""
+	this is a transient field. this only works if running sequentially
+	"""
+	_results = []
+	
+	if __run_state.completed_count == 0:
+		_before()
+		
 	if case.skipped:
 		__run_test_skip(case, ln_item)
 	else:
 		__run_test_run(case, ln_item)
+		
+	if __run_state.completed_count == __run_state.expected_count:
+		_after()
+		
+	"""
+	Update test name - TODO move this from function to param
+	"""
+	if __run_state.transient.override_test_name:
+		ln_item.description = __run_state.transient.override_test_name
+		
+	"""
+	Cleanup for the next test run
+	"""
+	__run_state.transient.override_test_name = &""
+	_curr_test_name = null
 	
 func __run_test_skip(case, ln_item):
-	assert(false, "Not Implemented")
+	__run_state.completed_count += 1
+	
+	"""
+	Update the GUI elements. The results of the test are collected at
+	_results.
+	"""
+	# Update the pass - fail
+	ln_item.status = &"SKIPPED"
+	ln_item.clear_blocks()
 			
 func __run_test_run(case, ln_item):
 	var method_name = case.fn
-	# Reset all errors
-	_results = []
+	
 	
 	# Only used for debugging purposes
 	_curr_test_name = method_name
@@ -160,9 +191,6 @@ func __run_test_run(case, ln_item):
 	"""
 	Perform the actual test
 	"""
-	if __run_state.completed_count == 0:
-		_before()
-		
 	_before_each()
 	
 	var args = []
@@ -180,18 +208,11 @@ func __run_test_run(case, ln_item):
 	__run_state.completed_count += 1
 	
 	_after_each()
-	if __run_state.completed_count == __run_state.expected_count:
-		_after()
 		
 	"""
 	Update the GUI elements. The results of the test are collected at
 	_results.
 	"""
-	
-	# Update the actual text element
-	if __run_state.transient.override_test_name:
-		ln_item.description = __run_state.transient.override_test_name
-	
 	# Update the pass - fail
 	ln_item.status = &"FAIL" if len(_results) > 0 else &"PASS"
 	ln_item.clear_blocks()
@@ -200,12 +221,6 @@ func __run_test_run(case, ln_item):
 		f_line_item.description = f
 		ln_item.add_block(f_line_item)
 		
-	"""
-	Cleanup for the next test run
-	"""
-	__run_state.transient.override_test_name = &""
-	_curr_test_name = null
-	
 	
 func __run_single_test(method_name,ln_item):
 	__set_run_state(1)

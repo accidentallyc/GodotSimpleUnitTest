@@ -1,4 +1,7 @@
 extends SimpleTest
 
-func test_suite_should_not_be_visible_cause_skipped(_skip):
-	expect_fail('This test should have been skipped')
+func test_suite_should_be_marked_as_skipped(_skip):
+	pass
+
+func it_skips_this_too(_skip):
+	pass
