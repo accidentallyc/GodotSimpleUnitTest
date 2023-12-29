@@ -110,14 +110,29 @@ func test_stub():
 
 ### Additonal Test Controls
 
-Inspired by the way GdUnit skips test, I've opted to follow a similar pattern.
-Adding `_skip` to the parameter will skip that specific test case
+Inspired by the way GdUnit skips test, I've opted to follow a similar pattern for test controls.
+#### `_skip`
+
+
+Adding `_skip` to the parameter will skip that specific test case for that test suite.
+
+_Note: This only works at a suite level. You cant skip whole suites yet..._
 
 ```gdscript
 func it_will_be_skipped(_skip):
   pass
 ```
 
+#### `_solo`
+
+Adding `_solo` to the parameter will skip all other non-solo tests in that suite.
+
+_Note: This only works at a suite level. You cant skip whole suites yet..._
+
+```gdscript
+func it_will_skip_others(_solo):
+  pass
+```
 
 ## Notes
 
