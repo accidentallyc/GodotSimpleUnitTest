@@ -20,41 +20,86 @@ static func get_test_cases(script):
 				case.skipped = true if GD__.find(entry.args, {"name":"_skip"}) else false
 				cases.append(case)
 	return cases
-	
-static func scan_and_rebuild_all_test_cases(scene_root):
-	_saratc_traverse_node(scene_root, scene_root)
 
-static func _saratc_traverse_node(node:Node, test_runner:SimpleTest_Runner):
-	for c in node.get_children():
-		var child = c as SimpleTest
-		if child:
-			_saratc_traverse_node(child, test_runner)
-	if node !=  test_runner and not(node is SimpleTest_Case): 
-		_saratc_rebuild_test_cases(node,test_runner)
 	
-	
-static func _saratc_rebuild_test_cases(t:SimpleTest, test_runner:Node):
-	var test = t as SimpleTest
-	
-	var cases = SimpleTest_Utils.get_test_cases(test)
-	var test_cases = GD__.map(cases,"fn")
-
-	# Remove the nodes already existing from the test_case list
-	# and if a non-existent method (aka a deleted test or renamed) then
-	# we remove it.
-	for child in test.get_children():
-		var case = child as SimpleTest_Case
-		if case:
-			if case.method_name in test_cases:
-				test_cases.erase(case.method_name)
-			else:
-				case.queue_free()
-	
-	# For the remaining in the list, this should be newly added methods
-	# And we create the test case nodes for them
-	for case_name in test_cases:
-		var test_case_node = SimpleTest_Case.new()
-		test.add_child(test_case_node)
-		test_case_node.method_name = case_name
-		test_case_node.name = case_name.replace(&"_",&" ")
-		test_case_node.owner = test_runner
+static func type_to_str(type:int):
+	match type:
+		TYPE_NIL:
+			return "null"
+		TYPE_BOOL:
+			return "bool"
+		TYPE_INT:
+			return "int"
+		TYPE_FLOAT:
+			return "float"
+		TYPE_STRING:
+			return "String"
+		TYPE_VECTOR2:
+			return "Vector2"
+		TYPE_VECTOR2I:
+			return "Vector2i"
+		TYPE_RECT2:
+			return "Rect2"
+		TYPE_RECT2I:
+			return "Rect2i"
+		TYPE_VECTOR3:
+			return "Vector3"
+		TYPE_VECTOR3I:
+			return "Vector3i"
+		TYPE_TRANSFORM2D:
+			return "Transform2D"
+		TYPE_VECTOR4:
+			return "Vector4"
+		TYPE_VECTOR4I:
+			return "Vector4i"
+		TYPE_PLANE:
+			return "Plane"
+		TYPE_QUATERNION:
+			return "Quaternion"
+		TYPE_AABB:
+			return "AABB"
+		TYPE_BASIS:
+			return "Basis"
+		TYPE_TRANSFORM3D:
+			return "Transform3D"
+		TYPE_PROJECTION:
+			return "Projection"
+		TYPE_COLOR:
+			return "Color"
+		TYPE_STRING_NAME:
+			return "StringName"
+		TYPE_NODE_PATH:
+			return "NodePath"
+		TYPE_RID:
+			return "RID"
+		TYPE_OBJECT:
+			return "Object"
+		TYPE_CALLABLE:
+			return "Callable"
+		TYPE_SIGNAL:
+			return "Signal"
+		TYPE_DICTIONARY:
+			return "Dictionary"
+		TYPE_ARRAY:
+			return "Array"
+		TYPE_PACKED_BYTE_ARRAY:
+			return "PackedByteArray"
+		TYPE_PACKED_INT32_ARRAY:
+			return "PackedInt32Array"
+		TYPE_PACKED_INT64_ARRAY:
+			return "PackedInt64Array"
+		TYPE_PACKED_FLOAT32_ARRAY:
+			return "PackedFloat32Array"
+		TYPE_PACKED_FLOAT64_ARRAY:
+			return "PackedFloat64Array"
+		TYPE_PACKED_STRING_ARRAY:
+			return "PackedStringArray"
+		TYPE_PACKED_VECTOR2_ARRAY:
+			return "PackedVector2Array"
+		TYPE_PACKED_VECTOR3_ARRAY:
+			return "PackedVector3Array"
+		TYPE_PACKED_COLOR_ARRAY:
+			return "PackedColorArray"
+		TYPE_MAX:
+			return "Represents the size of the Variant.Type enum"
+	return "typeof(%s) " % type
