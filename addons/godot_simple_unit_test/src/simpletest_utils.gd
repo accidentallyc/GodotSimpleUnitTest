@@ -3,24 +3,36 @@ class_name SimpleTest_Utils
 
 static func get_test_cases(script):
 	var cases = []
-	for entry in script.get_method_list():
-		var entry_name = entry.name
-		if entry.flags == METHOD_FLAG_NORMAL \
-				and entry_name != &"test_name" \
-				and ( \
-					entry_name.begins_with(&"it") \
-					or entry_name.begins_with(&"should") \
-					or entry_name.begins_with(&"test") \
-				):
+	for method in script.get_method_list():
+		var method_name = method.name
+		var args = method.args
+		if _is_method_test_case(method):
 				var case = {}
-				case.name = entry.name.replace(&"_",&" ")
-				case.fn = entry.name
-				case.args = entry.args
+				case.name = method.name.replace(&"_",&" ")
+				case.fn = method.name
+				case.args = args
 				
-				case.skipped = true if GD__.find(entry.args, {"name":"_skip"}) else false
+				var arg_groups = GD__.group_by(args,'name')
+				case.skipped = arg_groups.has('_skip')
+				case.solo = arg_groups.has('_solo')
 				cases.append(case)
 	return cases
 
+
+static func _is_method_test_case(method) ->bool:
+	var method_name = method.name
+	return method.flags == METHOD_FLAG_NORMAL \
+				and method_name != &"test_name" \
+				and ( \
+					method_name.begins_with(&"it") \
+					or method_name.begins_with(&"should") \
+					or method_name.begins_with(&"test") \
+				)
+
+static var argument_keywords = {
+	"_skip": true,
+	"_solo": true,
+}
 	
 static func type_to_str(type:int):
 	match type:

@@ -62,6 +62,8 @@ var _case_item
 var _results:Array[String]
 ## Only used for displaying purposes
 var _curr_test_name = null
+
+## Used in testing only
 var _test_case_line_item_map = {}
 var _runner
 
@@ -118,6 +120,11 @@ func __on_main_line_item_ready():
 	_ln_item.rerunButton.__test = self
 	
 	var cases = SimpleTest_Utils.get_test_cases(self)
+	
+	if GD__.some(cases, 'solo'):
+		for case in cases:
+			case.skipped = not(case.solo)
+	
 	__set_run_state(cases.size())
 	
 	for case in cases:
@@ -176,6 +183,7 @@ func __run_test_skip(case, ln_item):
 	# Update the pass - fail
 	ln_item.status = &"SKIPPED"
 	ln_item.clear_blocks()
+	
 			
 func __run_test_run(case, ln_item):
 	var method_name = case.fn
@@ -183,10 +191,6 @@ func __run_test_run(case, ln_item):
 	
 	# Only used for debugging purposes
 	_curr_test_name = method_name
-	
-	if case.skipped:
-		print("This is skipped ",case)
-
 		
 	"""
 	Perform the actual test
@@ -196,13 +200,13 @@ func __run_test_run(case, ln_item):
 	var args = []
 	
 	for arg in GD__.cast_array(case.args):
-		match arg.name:
-			"_skip":
-				args.append(null)
-				pass
-			_:
-				args.append(null)				
-				printerr("Unsupported paramter %s " % arg.name)
+		if not(SimpleTest_Utils.argument_keywords.has(arg.name)):
+			printerr(
+				"Unsupported test argument({arg}) provided for {method} ".format({
+						"arg":arg.name,
+						"method": method_name
+					}))
+		args.append(null)		
 	
 	self.callv(method_name, args)
 	__run_state.completed_count += 1
@@ -214,7 +218,9 @@ func __run_test_run(case, ln_item):
 	_results.
 	"""
 	# Update the pass - fail
-	ln_item.status = &"FAIL" if len(_results) > 0 else &"PASS"
+	ln_item.status = &"FAIL" if len(_results) > 0 else (
+		&"PASS (SOLO)" if case.solo else &"PASS"
+	)
 	ln_item.clear_blocks()
 	for f in _results:
 		var f_line_item = SimpleTest_LineItemTscn.instantiate()

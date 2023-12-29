@@ -31,6 +31,7 @@ Collections
 ## running each element of collection thru iteratee. The corresponding value 
 ## of each key is the number of times the key was returned by iteratee. 
 ## The iteratee is invoked with one argument: (value).
+## This attempts to replicate lodash's count_by. 
 ## See https://lodash.com/docs/4.17.15#countBy
 static func count_by(collection, iteratee = null):
 	if not(_is_collection(collection)):
@@ -48,7 +49,7 @@ static func count_by(collection, iteratee = null):
 
 ## Iterates over elements of collection, returning an array of all elements predicate returns truthy for. 
 ## The predicate is invoked with two arguments (value, index|key).
-## This matches closely in usage with lodash's find. 
+## This attempts to replicate lodash's filter. 
 ## See https://lodash.com/docs/4.17.15#filter
 static func filter(collection, iteratee = null):
 	if not(_is_collection(collection)):
@@ -64,12 +65,10 @@ static func filter(collection, iteratee = null):
 		index += 1
 	return new_collection
 	
-	
-
 
 ## Iterates over elements of collection, returning the first element predicate returns truthy for.
 ## The predicate is invoked with two arguments: (value, index|key).
-## This matches closely in usage with lodash's find. 
+## This attempts to replicate lodash's find. 
 ## See https://lodash.com/docs/4.17.15#find
 static func find(collection, iteratee = null, from_index = 0):
 	if not(_is_collection(collection)):
@@ -83,6 +82,28 @@ static func find(collection, iteratee = null, from_index = 0):
 			return item
 		index += 1
 	return null
+	
+	
+## Creates a dictionary composed of keys generated from the results of 
+## running each element of collection thru iteratee. The order of grouped values is 
+## determined by the order they occur in collection. The corresponding value 
+## of each key is an array of elements responsible for generating the key. 
+## The iteratee is invoked with one argument: (value).
+## See https://lodash.com/docs/4.17.15#groupBy
+static func group_by(collection, iteratee = null):
+	if not(_is_collection(collection)):
+		printerr("GD__.filter received a non-collection type object")
+		return null
+		
+	var iter_func = _from_shorthand_to_iter(iteratee, 1)
+	var counters = {}
+	for item in collection:
+		var key = str(iter_func.call(item,null))
+		if not(counters.has(key)):
+			counters[key] = []
+		counters[key].append(item)
+	return counters
+	
 
 static func map(collection, iteratee):
 	if not(_is_collection(collection)):
@@ -101,7 +122,23 @@ static func map(collection, iteratee):
 		new_collection.append(c[key])
 	return new_collection
 
-
+## Checks if predicate returns truthy for any element of collection. 
+## Iteration is stopped once predicate returns truthy. 
+## The predicate is invoked with two arguments: (value, index|key).
+## This attempts to replicate lodash's some. 
+## See https://lodash.com/docs/4.17.15#some
+static func some(collection, iteratee = null):
+	if not(_is_collection(collection)):
+		printerr("GD__.some received a non-collection type object")
+		return null
+		
+	var iter_func = _from_shorthand_to_iter(iteratee)
+	var index = 0
+	for item in collection:
+		if iter_func.call(item,index):
+			return true
+		index += 1
+	return false
 """
 Lang
 """

@@ -39,10 +39,10 @@ func update_element():
 		&"PASS":
 			statusNode.modulate = Color.GREEN
 			statusNode.show()
-		&"SKIPPED":
-			statusNode.modulate = Color.MAGENTA
+		&"PASS (SOLO)":
+			statusNode.modulate = Color.DARK_TURQUOISE
 			statusNode.show()
-		&"IMPLIED SKIP":
+		&"SKIPPED":
 			statusNode.modulate = Color.MAGENTA
 			statusNode.show()
 		_:
