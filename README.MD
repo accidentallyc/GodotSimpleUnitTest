@@ -23,6 +23,8 @@ Unit Testing Framework, try [GUT](https://github.com/bitwes/Gut) or [GdUnit4](ht
 1. Write the test (see Writing a test below)
 1. Run Scene
 
+Or watch this https://youtu.be/BcvDKTDBqQ0
+
 ##  Writing A Test
 
 - Tests must `extends SimpleTest` for it to be recognized
