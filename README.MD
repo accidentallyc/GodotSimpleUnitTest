@@ -10,7 +10,8 @@ It *doesn't* have any of the bells and whistles. Just the ability to run scenes 
 
 **why make this?**
 
-I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or GdUnit3
+I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out 
+Unit Testing Framework, try [GUT](https://github.com/bitwes/Gut) or [GdUnit4](https://github.com/MikeSchulze/gdUnit4)
 
 ## Setup
 1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_unit_test`
@@ -68,7 +69,7 @@ an `expect` statement.
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
 
-### Hooks (v0.0.3)
+### Hooks
 
 You can override these functions
 
@@ -97,7 +98,7 @@ Creates a stub handler. You can call `stub().callable` to get the actual stub to
 
 You can test stubs like this
 
-```
+```gdscript
 func test_stub():
   var handler = stub()
   var cb = handler.callable
@@ -105,6 +106,16 @@ func test_stub():
   cb() # Call function
 
   expect(handler).to.have.been.called()
+```
+
+### Additonal Test Controls
+
+Inspired by the way GdUnit skips test, I've opted to follow a similar pattern.
+Adding `_skip` to the parameter will skip that specific test case
+
+```gdscript
+func it_will_be_skipped(_skip):
+  pass
 ```
 
 
