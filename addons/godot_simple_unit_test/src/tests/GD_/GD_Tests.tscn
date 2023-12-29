@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dokmgrysiqxbj"]
+[gd_scene load_steps=6 format=3 uid="uid://dokmgrysiqxbj"]
 
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_0ylak"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/GD_/GD_filter_test.gd" id="2_3xdle"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/GD_/GD_find_test.gd" id="2_7cbqn"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/GD_/GD_property_test.gd" id="2_b2a58"]
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/GD_/GD_count_by_test.gd" id="4_rs07m"]
 
 [node name="GdTests" type="Node"]
 script = ExtResource("1_0ylak")
@@ -15,6 +16,9 @@ script = ExtResource("2_3xdle")
 
 [node name="Find" type="Node" parent="Collection Tests"]
 script = ExtResource("2_7cbqn")
+
+[node name="Count By" type="Node" parent="Collection Tests"]
+script = ExtResource("4_rs07m")
 
 [node name="Util Tests" type="Node" parent="."]
 

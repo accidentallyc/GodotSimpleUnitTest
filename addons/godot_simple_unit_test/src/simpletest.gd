@@ -129,6 +129,7 @@ func __on_main_line_item_ready():
 			func(): 
 				case_ln_item.rerunButton.show()
 				case_ln_item.rerunButton.__method_name = case.fn
+				case_ln_item.rerunButton.__case = case
 				case_ln_item.rerunButton.__test = self
 				__run_test(case, case_ln_item)
 		, Object.CONNECT_ONE_SHOT)
@@ -136,10 +137,13 @@ func __on_main_line_item_ready():
 		_ln_item.add_block(case_ln_item)
 		
 func __run_test(case, ln_item):
-	__run_test_run(case, ln_item)
+	if case.skipped:
+		__run_test_skip(case, ln_item)
+	else:
+		__run_test_run(case, ln_item)
 	
 func __run_test_skip(case, ln_item):
-	pass
+	assert(false, "Not Implemented")
 			
 func __run_test_run(case, ln_item):
 	var method_name = case.fn

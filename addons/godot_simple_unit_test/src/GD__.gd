@@ -27,11 +27,30 @@ static func noop(
 Collections
 """
 
+## Creates a dictionary composed of keys generated from the results of 
+## running each element of collection thru iteratee. The corresponding value 
+## of each key is the number of times the key was returned by iteratee. 
+## The iteratee is invoked with one argument: (value).
+## See https://lodash.com/docs/4.17.15#countBy
+static func count_by(collection, iteratee = null):
+	if not(_is_collection(collection)):
+		printerr("GD__.filter received a non-collection type object")
+		return null
+		
+	var iter_func = _from_shorthand_to_iter(iteratee, 1)
+	var counters = {}
+	for item in collection:
+		var key = str(iter_func.call(item,null))
+		if not(counters.has(key)):
+			counters[key] = 0
+		counters[key] += 1
+	return counters
+
 ## Iterates over elements of collection, returning an array of all elements predicate returns truthy for. 
 ## The predicate is invoked with two arguments (value, index|key).
 ## This matches closely in usage with lodash's find. 
 ## See https://lodash.com/docs/4.17.15#filter
-static func filter(collection, iteratee = GD__.identity):
+static func filter(collection, iteratee = null):
 	if not(_is_collection(collection)):
 		printerr("GD__.filter received a non-collection type object")
 		return null
@@ -52,7 +71,7 @@ static func filter(collection, iteratee = GD__.identity):
 ## The predicate is invoked with two arguments: (value, index|key).
 ## This matches closely in usage with lodash's find. 
 ## See https://lodash.com/docs/4.17.15#find
-static func find(collection, iteratee = GD__.identity, from_index = 0):
+static func find(collection, iteratee = null, from_index = 0):
 	if not(_is_collection(collection)):
 		printerr("GD__.find received a non-collection type object")
 		return null
@@ -154,7 +173,7 @@ static func _is_collection(item):
 	
 	
 ## Converts a shorthand to iterable
-static func _from_shorthand_to_iter(iteratee):
+static func _from_shorthand_to_iter(iteratee, args_count = 2):
 	var iter_func
 	match typeof(iteratee):
 		TYPE_DICTIONARY:
@@ -168,8 +187,14 @@ static func _from_shorthand_to_iter(iteratee):
 				prop,
 				val
 			)
+		TYPE_NIL:
+			iter_func = GD__.identity
 		TYPE_CALLABLE:
-			iter_func = iteratee
+			match args_count:
+				1: iter_func = func(v,_unused): return iteratee.call(v)
+				2: iter_func = iteratee
+				_: assert(false,"Unsupported args count")
+				
 		_:
 			printerr("GD__.find called with unsupported signature %s. See docs for more info" % iteratee)
 	return iter_func
