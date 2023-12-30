@@ -4,16 +4,22 @@ A very simple unit testing framework.
 
 It *doesn't* have any of the bells and whistles. Just the ability to run scenes as tests.
 
-![Sample Test Screenshot](./addons/godot_simple_test/docs/sample-test.png)
+![Sample Test Screenshot](./addons/godot_simple_unit_test/docs/sample-test.png)
 
-![Sample Setup Screenshot](./addons/godot_simple_test/docs/sample-setup.png)
+![Sample Setup Screenshot](./addons/godot_simple_unit_test/docs/sample-setup.png)
 
 **why make this?**
 
-I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out Unit Testing Framework, try GUT or GdUnit3
+I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out 
+Unit Testing Framework, try [GUT](https://github.com/bitwes/Gut) or [GdUnit4](https://github.com/MikeSchulze/gdUnit4)
+
+## _Note_
+Conflicting classes when upgrading?
+- I've renamed the root plugin from `godot_simple_test` to `godot_simple_unit_test`
+- So just delete the `addons/godot_simple_test` version
 
 ## Setup
-1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_test`
+1. Import addon from asset store or download as zip then unpack at `addons/godot_simple_unit_test`
 1. Activate plugin via `Project > Project Settings > Plugins > SimpleUnitTest - [] Enable`
 1. **Create a new scene** that has `SimpleTest_Runner` node as root
 1. **Create a new script** that extends `SimpleTest`
@@ -21,6 +27,8 @@ I didn't want a very editor heavy plugin. I wanted something lightweight, simple
     * You can rename this node to be whatever you want
 1. Write the test (see Writing a test below)
 1. Run Scene
+
+Or watch this https://youtu.be/BcvDKTDBqQ0
 
 ##  Writing A Test
 
@@ -68,7 +76,7 @@ an `expect` statement.
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
 
-### Hooks (v0.0.3)
+### Hooks
 
 You can override these functions
 
@@ -97,7 +105,7 @@ Creates a stub handler. You can call `stub().callable` to get the actual stub to
 
 You can test stubs like this
 
-```
+```gdscript
 func test_stub():
   var handler = stub()
   var cb = handler.callable
@@ -107,6 +115,31 @@ func test_stub():
   expect(handler).to.have.been.called()
 ```
 
+### Additonal Test Controls
+
+Inspired by the way GdUnit skips test, I've opted to follow a similar pattern for test controls.
+#### `_skip`
+
+
+Adding `_skip` to the parameter will skip that specific test case for that test suite.
+
+_Note: This only works at a suite level. You cant skip whole suites yet..._
+
+```gdscript
+func it_will_be_skipped(_skip):
+  pass
+```
+
+#### `_solo`
+
+Adding `_solo` to the parameter will skip all other non-solo tests in that suite.
+
+_Note: This only works at a suite level. You cant skip whole suites yet..._
+
+```gdscript
+func it_will_skip_others(_solo):
+  pass
+```
 
 ## Notes
 
