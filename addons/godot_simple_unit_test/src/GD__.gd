@@ -1,38 +1,560 @@
 ## Planning to make this into a port of Lodash?
 ## Set it as GD__ instead of GD_ to mark that its
 ## internal to this addon
+extends "res://addons/godot_simple_unit_test/src/GD__indirect.gd"
 class_name GD__
+
+class Reference:
+	pass
+
+# Use this to differentiate betwen default null
+# and actual null values. Do not use outside of this class.
+static var _NULL_ARG_ = Reference.new()
+
 """
 Array
 """
 static func not_implemented():  assert(false, "Not implemented")
-static func chunk(a=0, b=0, c=0): not_implemented()
-static func compact(a=0, b=0, c=0): not_implemented()
-static func concat(a=0, b=0, c=0): not_implemented()
-static func difference(a=0, b=0, c=0): not_implemented()
-static func difference_by(a=0, b=0, c=0): not_implemented()
-static func difference_with(a=0, b=0, c=0): not_implemented()
-static func drop(a=0, b=0, c=0): not_implemented()
-static func drop_right(a=0, b=0, c=0): not_implemented()
-static func drop_right_while(a=0, b=0, c=0): not_implemented()
-static func drop_while(a=0, b=0, c=0): not_implemented()
-static func fill(a=0, b=0, c=0): not_implemented()
-static func find_index(a=0, b=0, c=0): not_implemented()
-static func find_last_index(a=0, b=0, c=0): not_implemented()
-static func first(a=0, b=0, c=0): not_implemented() #alias of head
-static func head(a=0, b=0, c=0): not_implemented()
-static func flatten(a=0, b=0, c=0): not_implemented()
-static func flatten_deep(a=0, b=0, c=0): not_implemented()
-static func flatten_depth(a=0, b=0, c=0): not_implemented()
-static func from_pairs(a=0, b=0, c=0): not_implemented()
-static func index_of(a=0, b=0, c=0): not_implemented()
-static func initial(a=0, b=0, c=0): not_implemented()
-static func intersection(a=0, b=0, c=0): not_implemented()
-static func intersection_by(a=0, b=0, c=0): not_implemented()
-static func intersection_with(a=0, b=0, c=0): not_implemented()
-static func join(a=0, b=0, c=0): not_implemented()
-static func last(a=0, b=0, c=0): not_implemented()
-static func last_index_of(a=0, b=0, c=0): not_implemented()
+	
+## Creates an array of elements split into groups the length of size. 
+## If array can't be split evenly, the final chunk will be the remaining elements.
+## This attempts to replicate lodash's chunk. 
+## https://lodash.com/docs/4.17.15#chunk
+static func chunk(array,size=1): 
+	if not(array is Array):
+		printerr("GD__.chunk received a non-array type value")
+		return null
+	
+	# Thanks to cyberreality for the quick code they offered to the 
+	# community. https://www.reddit.com/r/godot/comments/e6ae27/comment/f9p3c2e/?utm_source=share&utm_medium=web2x&context=3
+	var new_array = []
+	var i = 0
+	var j = -1
+	for item in array:
+		if i % size == 0:
+			new_array.append([])
+			j += 1;
+		new_array[j].append(item)
+		i += 1
+	return new_array
+				
+## Creates an array with all falsey values removed. 
+## The falsiness is determined by a basic if statement.
+## The values false, null, 0, "", [], and {} are falsey.
+## This attempts to replicate lodash's compact. 
+## https://lodash.com/docs/4.17.15#compact
+static func compact(array):
+	if not(array is Array):
+		printerr("GD__.compact received a non-array type value")
+		return null
+		
+	var new_array = []
+	for item in array:
+		if item:
+			new_array.append(item)
+	return new_array
+		
+## Creates a new array concatenating array with any additional arrays and/or values.
+## This attempts to replicate lodash's concat. 
+## This func can receive up to 10 concat values. Hopefully thats enough
+## This attempts to replicate lodash's concat.
+## https://lodash.com/docs/4.17.15#concat
+static func concat(array, a=_NULL_ARG_,b=_NULL_ARG_,c=_NULL_ARG_,d=_NULL_ARG_,e=_NULL_ARG_,f=_NULL_ARG_,g=_NULL_ARG_,h=_NULL_ARG_,i=_NULL_ARG_,j=_NULL_ARG_,k=_NULL_ARG_):
+	if not(array is Array):
+		printerr("GD__.concat received a non-array type value")
+		return null
+		
+	var new_array = []
+	new_array.append_array(array)
+	for arg in [a,b,c,d,e,f,g,h,i,j,k]:
+		# stop after first occurence of _NULL_ARG_
+		if is_same(arg,_NULL_ARG_):
+			break
+		if arg is Array:
+			new_array.append_array(arg)
+		else:
+			new_array.append(arg)
+	return new_array
+				
+			
+## Creates an array of array values not included in the other given arrays 
+## using == for comparisons. The order and references of result values 
+## are determined by the first array.
+## This attempts to replicate lodash's difference.
+## https://lodash.com/docs/4.17.15#difference
+static func difference(array_left, array_right): 
+	if not(array_left is Array and array_right is Array):
+		printerr("GD__.difference received a non-array type value")
+		return null
+		
+	var new_array = []
+	new_array.append_array(array_left)
+	
+	for array_item_2 in array_right:
+		new_array.erase(array_item_2)
+		
+	return new_array
+
+
+## This method is like GD__.difference except that it accepts iteratee which 
+## is invoked for each element of array and values to generate the criterion 
+## by which they're compared using ==. The order and references of result 
+## values are determined by the first array. The iteratee is 
+## invoked with one argument: (value)
+## This attempts to replicate lodash's differenceBy.
+## https://lodash.com/docs/4.17.15#differenceBy
+static func difference_by(array_left, array_right, iteratee = null): 
+	if not(array_left is Array and array_right is Array):
+		printerr("GD__.difference_by received a non-array type value")
+		return null
+		
+	var iter_func = iteratee(iteratee)
+	
+	# new return array
+	var new_array = []
+	
+	# store processed keyes here
+	var keys_to_remove_map = {}
+	for array_item_2 in array_right:
+		keys_to_remove_map[iter_func.call(array_item_2)] = true
+		
+	var array_right_max = array_left.size()
+	
+	for left_item in array_left:
+		var left_key = iter_func.call(left_item)
+		if not(keys_to_remove_map.has(left_key)):
+			new_array.append(left_item)
+			
+	return new_array
+	
+## This method is like GD__.difference except that it accepts comparator 
+## which is invoked to compare elements of array to values. 
+## The order and references of result values are determined by the first array. 
+## The comparator is invoked with two arguments: (arrVal, othVal).
+## This attempts to replicate lodash's differenceWith.
+## https://lodash.com/docs/4.17.15#differenceWith
+static func difference_with(array_left, array_right, comparator:Callable): 
+	if not(array_left is Array and array_right is Array):
+		printerr("GD__.difference_with received a non-array type value")
+		return null
+		
+	var new_array = []
+	var has_match = false
+	for left_item in array_left:
+		has_match = false
+		for right_item in array_right:
+			var res = comparator.call(left_item,right_item)
+			if comparator.call(left_item,right_item):
+				has_match = true
+				break
+		if not(has_match):
+			new_array.append(left_item)
+	return new_array
+	
+
+## Creates a slice of array with n elements dropped from the beginning.
+## This attempts to replicate lodash's drop.
+## https://lodash.com/docs/4.17.15#drop
+static func drop(array, n:int=1):
+	if not(array is Array):
+		printerr("GD__.drop received a non-array type value")
+		return null
+		
+	var size = array.size()
+	var new_array = []
+	for i in range(n,size):
+		new_array.append(array[i])
+		i += 1
+		
+	return new_array
+	
+	
+## Creates a slice of array with n elements dropped from the beginning.
+## This attempts to replicate lodash's dropRight.
+## https://lodash.com/docs/4.17.15#dropRight
+static func drop_right(array, n:int=1):
+	if not(array is Array):
+		printerr("GD__.drop_right received a non-array type value")
+		return null
+		
+	var size = array.size() - n
+	var new_array = []
+	var i = 0
+	while i < size:
+		new_array.append(array[i])
+		i += 1
+		
+	return new_array
+	
+
+## Creates a slice of array excluding elements dropped from the end. 
+## Elements are dropped until predicate returns falsey. 
+## The predicate is invoked with two arguments: (value, index).
+## This attempts to replicate lodash's dropRightWhile.
+## https://lodash.com/docs/4.17.15#dropRightWhile
+static func drop_right_while(array, predicate = null):
+	if not(array is Array):
+		printerr("GD__.drop_right_while received a non-array type value")
+		return null
+		
+	var new_array = []
+	var n = array.size()
+	var iter_func = iteratee(predicate)
+	while n >= 0:
+		n -= 1
+		var result = iter_func.call(array[n],n)
+		if not(iter_func.call(array[n],n)):
+			break
+		
+	var i = 0
+	while i <= n:
+		new_array.append(array[i])
+		i += 1
+		
+	return new_array
+	
+	
+## Creates a slice of array excluding elements dropped from the beginning. 
+## Elements are dropped until predicate returns falsey. 
+## The predicate is invoked with two arguments: (value, index).
+## This attempts to replicate lodash's dropWhile.
+## https://lodash.com/docs/4.17.15#dropWhile
+static func drop_while(array, predicate = null):
+	if not(array is Array):
+		printerr("GD__.drop_while received a non-array type value")
+		return null
+		
+	var new_array = []
+	var size = array.size()
+	var n = -1
+	var iter_func = iteratee(predicate)
+	while n < size:
+		n += 1
+		var result = iter_func.call(array[n],n)
+		if not(iter_func.call(array[n],n)):
+			break
+		
+	var i = n
+	while i < size:
+		new_array.append(array[i])
+		i += 1
+		
+	return new_array
+	
+## Fills elements of array with value from start up to, but not including, end.
+## Note: This method mutates array.
+## This attempts to replicate lodash's fill.
+## https://lodash.com/docs/4.17.15#fill
+static func fill(array, value, start=0, end=-1):
+	if not(array is Array):
+		printerr("GD__.fill received a non-array type value")
+		return null
+		
+	if end == -1 or end > array.size():
+		end = array.size()
+
+	for i in range(start, end):
+		array[i] = value
+
+	return array
+	
+	
+## This method is like GD__.find except that it returns the index of the first 
+## element predicate returns truthy for instead of the element itself.
+## This attempts to replicate lodash's find_index.
+## https://lodash.com/docs/4.17.15#find_index
+static func find_index(array, predicate = null, from_index = 0):
+	if not(array is Array):
+		printerr("GD__.find_index received a non-array type value")
+		return null
+		
+	var iteratee = GD__.iteratee(predicate)
+	for i in range(from_index, array.size()):
+		if iteratee.call(array[i]):
+			return i
+	return -1
+	
+	
+## This method is like GD__.findIndex except that it iterates over 
+## elements of collection from right to left.
+## This attempts to replicate lodash's find_last_index.
+## https://lodash.com/docs/4.17.15#find_last_index
+static func find_last_index(array, predicate = null, from_index=-1):
+	if not(array is Array):
+		printerr("GD__.find_last_index received a non-array type value")
+		return null
+		
+	if from_index == -1 or from_index >= array.size():
+		from_index = array.size() - 1
+
+	var iter_func = GD__.iteratee(predicate)
+	for i in range(from_index, -1, -1):
+		if iter_func.call(array[i]):
+			return i
+	return -1
+	
+## Alias to head
+## This attempts to replicate lodash's first.
+## https://lodash.com/docs/4.17.15#first
+static func first(array):
+	print("GD__.first is an alias, prefer GD__.head to avoid overhead")
+	return head(array)
+
+
+## Flattens array a single level deep.
+## This attempts to replicate lodash's flatten.
+## https://lodash.com/docs/4.17.15#flatten
+static func flatten(array): 
+	if not(array is Array):
+		printerr("GD__.flatten received a non-array type value")
+		return null
+		
+	return flatten_depth(array, 1)
+	
+
+## Flattens array a single level deep.
+## This attempts to replicate lodash's flattenDeep.
+## https://lodash.com/docs/4.17.15#flattenDeep
+static func flatten_deep(array):
+	if not(array is Array):
+		printerr("GD__.flatten_deep received a non-array type value")
+		return null
+
+	return flatten_depth(array, INF)
+	
+
+## Recursively flatten array up to depth times.
+## This attempts to replicate lodash's flattenDepth.
+## https://lodash.com/docs/4.17.15#flattenDepth
+static func flatten_depth(array, depth = 1):
+	if not(array is Array):
+		printerr("GD__.flatten_deep received a non-array type value")
+		return null
+		
+	var new_array = array.duplicate()
+	var current_depth = 0
+
+	while current_depth < depth:
+		var is_flat = true
+		var tmp = []
+
+		for item in new_array:
+			if item is Array:
+				tmp.append_array(item)
+				is_flat = false
+			else:
+				tmp.append(item)
+		
+		new_array = tmp
+		if is_flat:
+			break
+		current_depth += 1
+
+	return new_array
+	
+## The inverse of GD__.to_pairs.
+## This method returns an object composed from key-value pairs.
+## This attempts to replicate lodash's from_pairs.
+## https://lodash.com/docs/4.17.15#from_pairs
+static func from_pairs(array): 
+	if not(array is Array):
+		printerr("GD__.to_pairs received a non-array type value")
+		return null
+		
+	var obj = {}
+	for i in array:
+		if not(i is Array) or i.size() != 2:
+			printerr("GD__.to_pairs entry must follow this [k,v]. Received %s instead" % i )
+			continue
+			
+		obj[i[0]] = i[1]
+	return obj
+	
+	
+## Gets the first element of array.
+## This attempts to replicate lodash's head.
+## https://lodash.com/docs/4.17.15#head
+static func head(array):
+	if not(array is Array):
+		printerr("GD__.head received a non-array type value")
+		return null
+
+	return array[0] if array.size() else null
+	
+
+## Gets the index at which the first occurrence of value is found in array 
+## using == for equality comparisons. If fromIndex is negative, 
+## it's used as the offset from the end of array.
+## This attempts to replicate lodash's index_of.
+## https://lodash.com/docs/4.17.15#index_of
+static func index_of(array, search, from_index = 0 ): 
+	if not(array is Array):
+		printerr("GD__.index_of received a non-array type value")
+		return null
+		
+	var size = array.size()
+	if from_index < 0:
+		from_index = max(size + from_index, 0)
+	
+	for i in range(from_index, size):
+		if array[i] == search:
+			return i
+	return -1
+	
+## Gets all but the last element of array.
+## This attempts to replicate lodash's initial.
+## https://lodash.com/docs/4.17.15#initial
+static func initial(array):
+	if not(array is Array):
+		printerr("GD__.initial received a non-array type value")
+		return null
+		
+	var copy = array.duplicate() 
+	copy.pop_back()
+	return copy
+	
+
+## Creates an array of unique values that are included in all given 
+## arrays using == for equality comparisons. The order and references of 
+## result values are determined by the first array.
+## This attempts to replicate lodash's intersection.
+## https://lodash.com/docs/4.17.15#intersection
+static func intersection(array_1,array_2,array_3 = null,array_4 = null,array_5 = null,array_6 = null,array_7 = null,array_8 = null,array_9 = null,array_10 = null,array_11 = null):
+	if not(array_1 is Array):
+		printerr("GD__.intersection received a non-array type value")
+		return null
+	if not array_2 is Array:
+		printerr("GD__.intersection received a non-array type value for array_2")
+		return null
+	return intersection_with(array_1,array_2,array_3,array_4,array_5,array_6,array_7,array_8,array_9,array_10,array_11)
+
+	
+## This method is like GD__.intersection except that it accepts iteratee 
+## which is invoked for each element of each arrays to generate the 
+## criterion by which they're compared. The order and references of result 
+## values are determined by the first array. The iteratee is invoked 
+## with one argument: (value)
+## This attempts to replicate lodash's intersection_by.
+## https://lodash.com/docs/4.17.15#intersection_by
+static func intersection_by(array_1, array_2, array_3 = null, array_4 = null, array_5 = null, array_6 = null, array_7 = null, array_8 = null, array_9 = null, array_10 = null, array_11 = null):
+	if not array_1 is Array:
+		printerr("GD__.intersection_by received a non-array type value for array_1")
+		return null
+	if not array_2 is Array:
+		printerr("GD__.intersection_by received a non-array type value for array_2")
+		return null
+
+	var arrays = [array_2, array_3, array_4, array_5, array_6, array_7, array_8, array_9, array_10, array_11]
+	var iteratee = GD__.identity
+	var max = 1
+
+	for i in arrays.size():
+		max = i
+		if arrays[i] == null:
+			# Previous is the iteratee
+			iteratee = iteratee(arrays[i - 1])
+			max -= 1
+			break
+
+	var left_array = array_1
+	for i in max:
+		var right_array = arrays[i]
+		var tmp = []
+		for left_value in left_array:
+			var transformed_left = iteratee.call(left_value)
+			for right_value in right_array:
+				var transformed_right = iteratee.call(right_value)
+				if transformed_left == transformed_right and left_value not in tmp:
+					tmp.append(left_value)
+					break
+		left_array = tmp
+	return left_array
+
+
+
+## This method is like GD__.intersection except that it accepts comparator 
+## which is invoked to compare elements of arrays. The order and references of 
+## result values are determined by the first array. The comparator is invoked 
+## with two arguments: (arrVal, othVal).
+## You can "intersect" with up to 10 values. Hopefully thats enough
+## This attempts to replicate lodash's intersection_with.
+## https://lodash.com/docs/4.17.15#intersection_with
+static func intersection_with(array_1,array_2,array_3 = null,array_4 = null,array_5 = null,array_6 = null,array_7 = null,array_8 = null,array_9 = null,array_10 = null,array_11 = null):
+	if not(array_1 is Array):
+		printerr("GD__.intersection_with received a non-array type value")
+		return null
+	if not(array_2 is Array):
+		printerr("GD__.intersection_with received a non-array type value")
+		return null
+		
+	var arrays = [array_2,array_3, array_4,array_5,array_6,array_7,
+			array_8,array_9,array_10,array_11 ]
+		
+	var comparator = GD__.is_equal
+	var max = 1
+	for i in arrays.size():
+		max = i
+		if arrays[i] is Callable:
+			comparator = arrays[i]
+			break
+		if arrays[i] == null:
+			break
+		
+
+	var left_array = array_1
+	for i in max:
+		var right_array = arrays[i]
+		var tmp = []
+		for left_value in left_array:
+			for right_value in right_array:
+				if comparator.call(left_value,right_value) and left_value not in tmp:
+					tmp.append(left_value)
+					break
+		left_array = tmp
+	return left_array
+	
+	
+## Converts all elements in array into a string separated by separator.
+## This attempts to replicate lodash's join.
+## https://lodash.com/docs/4.17.15#join
+static func join(array, separator=&','):
+	if not(array is Array):
+		printerr("GD__.join received a non-array type value")
+		return null
+		
+	return separator.join(array)
+		
+		
+## Gets the last element of array.		
+## This attempts to replicate lodash's last.
+## https://lodash.com/docs/4.17.15#last
+static func last(array):
+	if not(array is Array):
+		printerr("GD__.last received a non-array type value")
+		return null
+		
+	return array.back()
+	
+	
+## This method is like GD__.index_of except that it iterates 
+## over elements of array from right to left.
+## This attempts to replicate lodash's last_index_of.
+## https://lodash.com/docs/4.17.15#last_index_of
+static func last_index_of(array, search, from_index = null ): 
+	if not(array is Array):
+		printerr("GD__.last_index_of received a non-array type value")
+		return null
+		
+	var size = array.size()
+	from_index = GD__.default_to(from_index, size -1)
+	if from_index < 0:
+		from_index = max(size + from_index, 0)
+	
+	for i in range(from_index, -1, -1):
+		if array[i] == search:
+			return i
+	return -1
+	
 static func nth(a=0, b=0, c=0): not_implemented()
 static func pull(a=0, b=0, c=0): not_implemented()
 static func pull_all(a=0, b=0, c=0): not_implemented()
@@ -79,15 +601,15 @@ Collections
 ## Creates a dictionary composed of keys generated from the results of 
 ## running each element of collection thru iteratee. The corresponding value 
 ## of each key is the number of times the key was returned by iteratee. 
-## The iteratee is invoked with one argument: (value).
+## The iteratee is invoked with one argument: (value, _UNUSED_).
 ## This attempts to replicate lodash's count_by. 
 ## See https://lodash.com/docs/4.17.15#countBy
 static func count_by(collection, iteratee = null):
 	if not(_is_collection(collection)):
-		printerr("GD__.filter received a non-collection type object")
+		printerr("GD__.filter received a non-collection type value")
 		return null
 		
-	var iter_func = iteratee(iteratee, 1)
+	var iter_func = iteratee(iteratee)
 	var counters = {}
 	for item in collection:
 		var key = str(iter_func.call(item,null))
@@ -96,8 +618,28 @@ static func count_by(collection, iteratee = null):
 		counters[key] += 1
 	return counters
 
-static func each(a=0, b=0, c=0): not_implemented() # alias for forEach
-static func for_each(a=0, b=0, c=0): not_implemented()
+
+## Alias of for_each
+## This attempts to replicate lodash's each.
+## https://lodash.com/docs/4.17.15#each
+static func each(collection, iteratee): 
+	print("GD__.each is an alias, prefer GD__.for_each to avoid overhead")
+	return for_each(collection, iteratee)
+
+## Iterates over elements of collection and invokes iteratee for each element. 
+## The iteratee is invoked with two arguments: (value, index|key). 
+## Iteratee functions may exit iteration early by explicitly returning false.
+static func for_each(collection, iteratee): 
+	if not(_is_collection(collection)):
+		printerr("GD__.for_each received a non-collection type value")
+		return null
+		
+	var iter_func = iteratee(iteratee)
+	for key in keyed_iterable(collection):
+		var result = iter_func.call(collection[key],key)
+		# short circuit
+		if is_same(result,false): 
+			return
 
 static func each_right(a=0, b=0, c=0): not_implemented()
 static func every(a=0, b=0, c=0): not_implemented()
@@ -108,7 +650,7 @@ static func every(a=0, b=0, c=0): not_implemented()
 ## See https://lodash.com/docs/4.17.15#filter
 static func filter(collection, iteratee = null):
 	if not(_is_collection(collection)):
-		printerr("GD__.filter received a non-collection type object")
+		printerr("GD__.filter received a non-collection type value")
 		return null
 		
 	var iter_func = iteratee(iteratee)
@@ -127,7 +669,7 @@ static func filter(collection, iteratee = null):
 ## See https://lodash.com/docs/4.17.15#find
 static func find(collection, iteratee = null, from_index = 0):
 	if not(_is_collection(collection)):
-		printerr("GD__.find received a non-collection type object")
+		printerr("GD__.find received a non-collection type value")
 		return null
 		
 	var iter_func = iteratee(iteratee)
@@ -150,14 +692,14 @@ static func for_each_right(a=0, b=0, c=0): not_implemented()
 ## running each element of collection thru iteratee. The order of grouped values is 
 ## determined by the order they occur in collection. The corresponding value 
 ## of each key is an array of elements responsible for generating the key. 
-## The iteratee is invoked with one argument: (value).
+## The iteratee is invoked with one argument: (value, _UNUSED_).
 ## See https://lodash.com/docs/4.17.15#groupBy
 static func group_by(collection, iteratee = null):
 	if not(_is_collection(collection)):
-		printerr("GD__.filter received a non-collection type object")
+		printerr("GD__.filter received a non-collection type value")
 		return null
 		
-	var iter_func = iteratee(iteratee, 1)
+	var iter_func = iteratee(iteratee)
 	var counters = {}
 	for item in collection:
 		var key = str(iter_func.call(item,null))
@@ -174,7 +716,7 @@ static func key_by(a=0, b=0, c=0): not_implemented()
 
 static func map(collection, iteratee):
 	if not(_is_collection(collection)):
-		printerr("GD__.map received a non-collection type object")
+		printerr("GD__.map received a non-collection type value")
 		return null
 		
 	
@@ -207,7 +749,7 @@ static func size(a=0, b=0, c=0): not_implemented()
 ## See https://lodash.com/docs/4.17.15#some
 static func some(collection, iteratee = null):
 	if not(_is_collection(collection)):
-		printerr("GD__.some received a non-collection type object")
+		printerr("GD__.some received a non-collection type value")
 		return null
 		
 	var iter_func = iteratee(iteratee)
@@ -263,6 +805,7 @@ static func cast_array(v):
 		return v if v is Array else [v]
 	else:
 		return []
+	
 		
 static func clone(a=0, b=0, c=0): not_implemented()
 static func clone_deep(a=0, b=0, c=0): not_implemented()
@@ -282,7 +825,12 @@ static func is_buffer(a=0, b=0, c=0): not_implemented()
 static func is_date(a=0, b=0, c=0): not_implemented()
 static func is_element(a=0, b=0, c=0): not_implemented()
 static func is_empty(a=0, b=0, c=0): not_implemented()
-static func is_equal(a=0, b=0, c=0): not_implemented()
+
+## Basically a lambda wrapper for `==`
+static func is_equal(left,right): 
+	return left == right
+	
+	
 static func is_equal_with(a=0, b=0, c=0): not_implemented()
 static func is_error(a=0, b=0, c=0): not_implemented()
 #static func is_finite(a=0, b=0, c=0): not_implemented()
@@ -326,7 +874,16 @@ MATH
 static func add(a=0, b=0, c=0): not_implemented()
 #static func ceil(a=0, b=0, c=0): not_implemented()
 static func divide(a=0, b=0, c=0): not_implemented()
-#static func floor(a=0, b=0, c=0): not_implemented()
+
+## Computes number rounded down to precision.
+## This is renamed to floor_ because it conflicts with
+## Godot's floor function.
+## This attempts to replicate lodash's some. 
+## See https://lodash.com/docs/4.17.15#some
+static func floor(number, precision = 0):
+	var scale = pow(10.0, precision)
+	return __floor(number * scale) / scale
+	
 #static func max(a=0, b=0, c=0): not_implemented()
 static func max_by(a=0, b=0, c=0): not_implemented()
 static func mean(a=0, b=0, c=0): not_implemented()
@@ -406,39 +963,48 @@ static func bind_all(a=0, b=0, c=0): not_implemented()
 static func cond(a=0, b=0, c=0): not_implemented()
 static func conforms(a=0, b=0, c=0): not_implemented()
 static func constant(a=0, b=0, c=0): not_implemented()
-static func default_to(a=0, b=0, c=0): not_implemented()
+
+
+## Checks value to determine whether a default value should be returned 
+## in its place. The defaultValue is returned if value is NaN or null
+## This attempts to replicate lodash's defaultTo. 
+## https://lodash.com/docs/4.17.15#defaultTo
+static func default_to(a,b): 
+	if a == null or is_nan(a) or is_same(a,_NULL_ARG_):
+		return b
+	return a
+	
+	
 static func flow(a=0, b=0, c=0): not_implemented()
 static func flow_right(a=0, b=0, c=0): not_implemented()
 
+## This method returns the first argument it receives.
+## This attempts to replicate lodash's identity. 
+## https://lodash.com/docs/4.17.15#identity
 static func identity(value, _unused = null): 
 	return value
 	
-## Converts a shorthand to iterable
-static func iteratee(iteratee, args_count = 2):
-	var iter_func
-	match typeof(iteratee):
+## Converts shorthands to callables for use in other funcs
+## This attempts to replicate lodash's iteratee. 
+## https://lodash.com/docs/4.17.15#iteratee
+static func iteratee(iteratee_val):
+	match typeof(iteratee_val):
 		TYPE_DICTIONARY:
-			iter_func = matches(iteratee)
+			return matches(iteratee_val)
 		TYPE_STRING:
-			iter_func = property(iteratee)
+			return property(iteratee_val)
 		TYPE_ARRAY:
-			var prop = _property(["0"],iteratee)
-			var val = _property(["1"],iteratee)
-			iter_func = matches_property(
-				prop,
-				val
-			)
+			var prop = _property(["0"],iteratee_val)
+			var val = _property(["1"],iteratee_val)
+			return matches_property(prop,val)
 		TYPE_NIL:
-			iter_func = GD__.identity
+			return GD__.identity
 		TYPE_CALLABLE:
-			match args_count:
-				1: iter_func = func(v,_unused): return iteratee.call(v)
-				2: iter_func = iteratee
-				_: assert(false,"Unsupported args count")
+			return iteratee_val
 				
 		_:
 			printerr("GD__.find called with unsupported signature %s. See docs for more info" % iteratee)
-	return iter_func
+	return null
 
 
 static func matches(dict:Dictionary) -> Callable:
@@ -446,7 +1012,7 @@ static func matches(dict:Dictionary) -> Callable:
 		var found = true
 		for key in dict:
 			var prop = value.get(key)
-			found = found and (prop and dict[key] == prop)
+			found = found and dict[key] == prop
 		return found
 		
 static func matches_property(string:String, v):
@@ -469,6 +1035,7 @@ static func over_every(a=0, b=0, c=0): not_implemented()
 static func over_some(a=0, b=0, c=0): not_implemented()
 
 ## Creates a function that returns the value at path of a given object.	
+## T
 static func property(string:String):
 	var splits = string.split(":")
 	return func (value, _unused = null):
@@ -513,6 +1080,20 @@ static func times(a=0, b=0, c=0): not_implemented()
 static func to_path(a=0, b=0, c=0): not_implemented()
 static func unique_id(a=0, b=0, c=0): not_implemented()
 
+"""
+NON-LODASH FUNCS
+"""
+
+## Ensures that when it iterates through the item, it always iterates via keys
+## This does not have a lodash equivalent	
+static func keyed_iterable(thing):
+	if thing is Array:
+		return range(thing.size())
+	elif thing is Dictionary:
+		return thing
+		
+	printerr("_to_collection received a non-collection")
+	return []
 
 """
 INTERNAL
