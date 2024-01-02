@@ -20,7 +20,6 @@ func _ready():
 	add_child(_canvas)
 	
 func _begin_test_runs():
-	print('GD__.filter(_tests,"solo")',GD__.filter(_tests,"solo"))
 	var entries = GD__.filter(_tests,"solo") if _has_solo_test_suites else _tests
 	for entry in entries:
 		entry.test.__on_test_initialize(self)
