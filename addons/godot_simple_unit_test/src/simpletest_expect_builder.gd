@@ -108,6 +108,31 @@ func called_n_times(n:int, description: String = &""):
 			&"v2": count
 		})
 	)
+	
+
+func IN(array, description: String = &""):
+	return test.__assert(
+		__to_notted(value in array),
+		description,
+		&"Expected {v1} {to} {v1}".format({
+			&"v1": value,
+			&"to": &"to be in" if __flag_not_notted else &"NOT to be in",
+			&"v2": array
+		})
+	) 
+	
+#func in_dictionary(dict:Dictionary, description: String = &""):
+	#return test.__assert(
+		#__to_notted(dict.has(value)),
+		#description,
+		#&"Expected key {v1} {to} {v1}".format({
+			#&"v1": value,
+			#&"to": &"to be in" if __flag_not_notted else &"NOT to be in",
+			#&"v2": dict
+		#})
+	#) 
+	
+	
 """
 /////////////////////////////
 // INTERNAL STUFF //
