@@ -57,6 +57,8 @@ an `expect` statement.
 
 | Chainable Keyword  | What |
 | ------------- | -------------
+| `a`  | Sugar only. Does nothing.
+| `an`  | Sugar only. Does nothing.
 | `to`  | Sugar only. Does nothing.
 | `have`  | Sugar only. Does nothing.
 | `been`  | Sugar only. Does nothing.
@@ -72,6 +74,8 @@ an `expect` statement.
 | `equal(Variant)` | Loosely compares the 2 values using `==`
 | `truthy()` | Checks for truthiness using a ternary operator
 | `falsey()` | Checks for falsiness using a ternary operator
+| `value_in(Array or Dictionary or String)` | Checks values for item
+| `key_in(Array or Dictionary)` | Checks keys/indexes for item
 | `called()` | Checks if a `stub` has been called atleast once
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 
@@ -141,6 +145,20 @@ func it_will_skip_others(_solo):
   pass
 ```
 
+#### `_solo_suite`
+
+Adding `_solo_suite` to _any_ test case will cause the whole suite to be run solo (ignoring all other non-solo suites).
+
+```
+func test_a(_solo, _solo_suite): # can be compounded
+  pass 
+
+func test_b(_solo): 
+  pass
+
+func test_c(): #will not run because no _solo_
+  pass
+```
 ## Notes
 
 If for some reason, you do decide to use this and need more expect funcs, just open an issue.
