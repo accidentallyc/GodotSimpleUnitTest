@@ -79,7 +79,8 @@ func _ready():
 	_cases = SimpleTest_Utils.get_test_cases(self)
 	
 	var request_to_run_as_solo_suite = GD__.some(_cases,"solo_suite")
-	owner.register_test(self,request_to_run_as_solo_suite)
+	var request_to_skip_suite = GD__.some(_cases,"skip_suite")
+	owner.register_test(self,request_to_run_as_solo_suite, request_to_skip_suite)
 	
 	#owner.runner_ready.connect(__on_test_initialize,Object.CONNECT_ONE_SHOT)
 

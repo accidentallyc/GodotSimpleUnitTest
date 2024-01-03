@@ -127,18 +127,26 @@ Inspired by the way GdUnit skips test, I've opted to follow a similar pattern fo
 
 Adding `_skip` to the parameter will skip that specific test case for that test suite.
 
-_Note: This only works at a suite level. You cant skip whole suites yet..._
-
 ```gdscript
 func it_will_be_skipped(_skip):
+  pass
+```
+
+#### `_skip_suite`
+
+Adding `_skip_suite` to _any_ test case will cause the whole suite to be skipped. It will ignore all other test controls in the test case.
+
+```gdscript
+func it_will_skip_everything here(_skip_suite):
+  pass
+
+func it_will_skip_this_too():
   pass
 ```
 
 #### `_solo`
 
 Adding `_solo` to the parameter will skip all other non-solo tests in that suite.
-
-_Note: This only works at a suite level. You cant skip whole suites yet..._
 
 ```gdscript
 func it_will_skip_others(_solo):

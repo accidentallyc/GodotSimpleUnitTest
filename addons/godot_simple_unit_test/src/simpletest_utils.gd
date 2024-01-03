@@ -4,6 +4,7 @@ class Case:
 	var skipped:bool
 	var solo:bool
 	var solo_suite:bool
+	var skip_suite:bool
 	var name:String
 	var fn:String
 	var args:Array
@@ -15,7 +16,7 @@ static func get_test_cases(script):
 		var method_name = method.name
 		var args = method.args
 		if _is_method_test_case(method):
-				var case = Case.new()
+				var case := Case.new()
 				case.name = method.name.replace(&"_",&" ")
 				case.fn = method.name
 				case.args = args
@@ -24,6 +25,7 @@ static func get_test_cases(script):
 				case.skipped = arg_groups.has('_skip')
 				case.solo = arg_groups.has('_solo')
 				case.solo_suite = arg_groups.has('_solo_suite')
+				case.skip_suite = arg_groups.has('_skip_suite')
 				cases.append(case)
 	return cases
 
@@ -41,7 +43,8 @@ static func _is_method_test_case(method) ->bool:
 static var argument_keywords = {
 	"_skip": true,
 	"_solo": true,
-	"_solo_suite": true
+	"_solo_suite": true,
+	"_skip_suite": true
 }
 	
 static func type_to_str(type:int):
