@@ -16,6 +16,9 @@ var _has_solo_test_suites = false
 
 
 func _ready():
+	if Engine.is_editor_hint():
+		return
+		
 	_canvas = SimpleTest_CanvasTscn.instantiate()
 	_canvas.ready.connect(func (): _begin_test_runs())
 	add_child(_canvas)
