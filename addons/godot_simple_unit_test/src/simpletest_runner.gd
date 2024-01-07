@@ -34,7 +34,12 @@ func _begin_test_runs():
 		total_test_count += test._cases_runnable.size()
 		failed_test_count += test._cases_failed.size()
 		
+	if total_test_count == 0:
+		_canvas.container.description = "No tests yet. Add a new node of type SimpleTest to start 😁"
+		return
 		
+	#@TODO unhide this, and make it rerun everything
+	_canvas.container.rerunButton.hide() 
 	_canvas.container.status = &"FAIL" if failed_test_count else &"PASS"
 	_canvas.container.description = &"{name} ({passing}/{total} passed)".format({
 		"name":name,

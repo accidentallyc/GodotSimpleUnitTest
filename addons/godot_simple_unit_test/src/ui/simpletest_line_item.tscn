@@ -11,13 +11,11 @@ script = ExtResource("1_0ootq")
 [node name="HBoxContainer - Line Item" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Status" type="Label" parent="HBoxContainer - Line Item"]
+[node name="Collapse Toggle" type="Button" parent="HBoxContainer - Line Item"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-
-[node name="Description" type="Label" parent="HBoxContainer - Line Item"]
-unique_name_in_owner = true
-layout_mode = 2
+text = "  -  "
 
 [node name="Rerun Button" type="Button" parent="HBoxContainer - Line Item"]
 unique_name_in_owner = true
@@ -25,6 +23,16 @@ visible = false
 layout_mode = 2
 text = "▶"
 script = ExtResource("2_aoudm")
+
+[node name="Status" type="Label" parent="HBoxContainer - Line Item"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pass"
+
+[node name="Description" type="Label" parent="HBoxContainer - Line Item"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "- Description"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -34,4 +42,5 @@ theme_override_constants/margin_left = 25
 unique_name_in_owner = true
 layout_mode = 2
 
+[connection signal="button_up" from="HBoxContainer - Line Item/Collapse Toggle" to="." method="toggle_collapse"]
 [connection signal="button_up" from="HBoxContainer - Line Item/Rerun Button" to="HBoxContainer - Line Item/Rerun Button" method="_on_button_up"]
