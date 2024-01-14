@@ -71,12 +71,16 @@ func clear_blocks():
 			
 	# no children means cant collapse
 	collapse_toggle.hide()
-		
-
-func toggle_collapse():
-	if childContainerNode.visible:
+	
+	
+func set_collapse(is_collapse:bool):
+	if is_collapse:
 		childContainerNode.hide()
 		collapse_toggle.text = uncollapse_txt
-	else:
-		childContainerNode.show()
-		collapse_toggle.text = collapse_txt
+		return
+	childContainerNode.show()
+	collapse_toggle.text = collapse_txt
+		
+
+func toggle_collapse(force_collapse = null):
+	set_collapse(childContainerNode.visible)

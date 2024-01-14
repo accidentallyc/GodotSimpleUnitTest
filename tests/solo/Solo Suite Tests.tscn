@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://d3c73v4hp7u2i"]
 
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_yh13x"]
-[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo/measure_skip_this_suite.gd" id="2_8ie11"]
-[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/tests/solo/solo_suite_test.gd" id="3_53gr6"]
+[ext_resource type="Script" path="res://tests/solo/measure_skip_this_suite.gd" id="2_8ie11"]
+[ext_resource type="Script" path="res://tests/solo/solo_suite_test.gd" id="3_53gr6"]
 
 [node name="Solo Test Suite" type="Node"]
 script = ExtResource("1_yh13x")

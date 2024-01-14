@@ -158,11 +158,15 @@ func __on_main_line_item_ready():
 		__run_test(case, case_ln_item)
 		if _errors.size() > 0:
 			_cases_failed.append(case)
+			
 		
 	on_finished_full_suite_run.emit()
 	
 	_ln_item.status = &"FAIL" if _cases_failed.size() else &"PASS"
 	
+	# default to collapsed if no failures
+	# else open
+	_ln_item.set_collapse(not(_cases_failed))
 	
 	_ln_item.description = &"{name} ({passing}/{total} passed)".format({
 		"name":name,
@@ -265,8 +269,8 @@ func __run_single_test(method_name,ln_item):
 	
 	
 func __run_all_tests():
-	_ln_item.queue_free()
-	__on_test_initialize(_runner)
+	_ln_item.clear_blocks()
+	__on_main_line_item_ready()
 	
 
 func __load_test_cases():
