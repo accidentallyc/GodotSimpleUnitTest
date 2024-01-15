@@ -42,8 +42,8 @@ func equal(other, description: String = &""):
 		&"Expected {v1}({t1}) to {not}{equal} {v2}({t2})".format({
 			&"v1":str(value),
 			&"v2":str(other),
-			&"t1":SimpleTest_Utils.type_to_str(typeof(value)),
-			&"t2":SimpleTest_Utils.type_to_str(typeof(other)),
+			&"t1":type_string(typeof(value)),
+			&"t2":type_string(typeof(other)),
 			&"equal": &"STRICTLY equal" if is_strict else &"loosely equal",
 			&"not": &"" if __flag_not_notted else &"NOT ",
 		})
