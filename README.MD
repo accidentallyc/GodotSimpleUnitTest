@@ -76,6 +76,11 @@ an `expect` statement.
 | `falsey()` | Checks for falsiness using a ternary operator
 | `value_in(Array or Dictionary or String)` | Checks values for item
 | `key_in(Array or Dictionary)` | Checks keys/indexes for item
+| `size()` | Checks the size of an array, dictionary or string
+| `size_gt()` | Same as size but performs "greater than"
+| `size_gte()` | Same as size but performs "greater than or equals"
+| `size_lt()` | Same as size but performs "lesser than"
+| `size_lte()` | Same as size but performs "lesser than or equals"
 | `called()` | Checks if a `stub` has been called atleast once
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
 

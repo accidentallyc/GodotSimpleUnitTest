@@ -156,7 +156,9 @@ func __on_main_line_item_ready():
 		
 		await case_ln_item.ready
 		__run_test(case, case_ln_item)
-		if _errors.size() > 0:
+		
+		var has_error = _errors.size() > 0
+		if has_error:
 			_cases_failed.append(case)
 			
 		

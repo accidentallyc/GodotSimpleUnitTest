@@ -14,7 +14,6 @@ var _canvas
 var _solo_tests = []
 var _has_solo_test_suites = false
 
-
 func _ready():
 	if Engine.is_editor_hint():
 		return

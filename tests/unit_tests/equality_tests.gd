@@ -159,6 +159,35 @@ func test_key_in():
 	assert_fail_message("Expected 12 to be key of [1, 4, 5]")
 	assert_fail_message("Expected foo to be key of [1, 4, 5]")
 	assert_fail_message('Expected bar to be key of { "foo": "bar" }')
+	
+
+func test_have_size():
+	expect([1,2,3]).to.have.size(2)
+	assert_fail_message("Expected to have size 2 but got 3")
+	expect([1,2,3]).to.have.size(3)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_gt(3)
+	assert_fail_message("Expected to have size greater than 3 but got 3")
+	expect([1,2,3]).to.have.size_gt(2)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_gte(4)
+	assert_fail_message("Expected to have size greater than or equal to 4 but got 3")
+	expect([1,2,3]).to.have.size_gte(3)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_lt(3)
+	assert_fail_message("Expected to have size lesser than 3 but got 3")
+	expect([1,2,3]).to.have.size_lt(4)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_lte(1)
+	assert_fail_message("Expected to have size lesser than or equal to 1 but got 3")
+	assert_fail_message("tmp remove this lkine")
+	expect([1,2,3]).to.have.size_lte(4)
+	assert_passing()
+	
 """
 ////////////////////
 // TEST UTILITIES //
