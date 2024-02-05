@@ -184,7 +184,6 @@ func test_have_size():
 	
 	expect([1,2,3]).to.have.size_lte(1)
 	assert_fail_message("Expected to have size lesser than or equal to 1 but got 3")
-	assert_fail_message("tmp remove this lkine")
 	expect([1,2,3]).to.have.size_lte(4)
 	assert_passing()
 	

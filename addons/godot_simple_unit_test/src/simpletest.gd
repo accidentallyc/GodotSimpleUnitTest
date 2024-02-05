@@ -115,6 +115,7 @@ func _after_each():
 
 func __on_test_initialize(runner:SimpleTest_Runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
+	_ln_item.set_runner(runner)
 	_ln_item.description = name
 
 	_ln_item.status = &"PASS"
@@ -140,6 +141,7 @@ func __on_main_line_item_ready():
 	_cases_failed = []
 	for case in _cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
+		case_ln_item.set_runner(_runner)
 		_test_case_line_item_map[case.fn] = case_ln_item
 		
 		case_ln_item.case = case
@@ -261,6 +263,7 @@ func __run_test_run(case, ln_item):
 	ln_item.clear_blocks()
 	for f in _errors:
 		var f_line_item = SimpleTest_LineItemTscn.instantiate()
+		f_line_item.set_runner(_runner)
 		f_line_item.description = f
 		ln_item.add_block(f_line_item)
 		

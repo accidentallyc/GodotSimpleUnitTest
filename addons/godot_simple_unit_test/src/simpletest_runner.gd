@@ -13,12 +13,16 @@ var _tests = []
 var _canvas
 var _solo_tests = []
 var _has_solo_test_suites = false
+var _should_show_passed_tests = false
+
+signal on_toggle_show_passed_tests
 
 func _ready():
 	if Engine.is_editor_hint():
 		return
 		
 	_canvas = SimpleTest_CanvasTscn.instantiate()
+	_canvas._runner = self
 	_canvas.ready.connect(func (): _begin_test_runs())
 	add_child(_canvas)
 	
@@ -41,6 +45,7 @@ func _begin_test_runs():
 		return
 		
 	#@TODO unhide this, and make it rerun everything
+	_canvas.container.set_runner(self)
 	_canvas.container.rerunButton.hide() 
 	_canvas.container.status = &"FAIL" if failed_test_count else &"PASS"
 	_canvas.container.description = &"{name} ({passing}/{total} passed)".format({
