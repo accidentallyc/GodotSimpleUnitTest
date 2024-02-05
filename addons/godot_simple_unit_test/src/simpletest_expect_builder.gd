@@ -28,7 +28,6 @@ var NOT:
 var strictly = self:
 	get:
 		__s.is_strict = true
-		__s.equals = LambdaOperations.equals_strict
 		return self
 
 		

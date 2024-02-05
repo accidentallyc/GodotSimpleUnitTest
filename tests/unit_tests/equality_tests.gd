@@ -48,6 +48,20 @@ func test_equals_passes_when_equal_but_diff_type():
 	try(func (): expect([1,2,3]).to.equal([1,2,3]))
 	assert_passing()
 	
+func test_strict_equals_checks_for_instance():
+	var ary_1 = [1,2,3]
+	var ary_2 = [1,2,3]
+	test_name("equality between mismatching types should FAIL")
+	try(func (): expect(ary_1).to.strictly.equal(ary_2))
+	assert_fail_message("Expected [1, 2, 3](Array) to STRICTLY equal [1, 2, 3](Array)")
+	
+	try(func (): expect(ary_1).to.NOT.strictly.equal(ary_1))
+	assert_fail_message("Expected [1, 2, 3](Array) to NOT STRICTLY equal [1, 2, 3](Array)")
+	
+	try(func (): expect(ary_1).to.strictly.equal(ary_1))
+	assert_passing()
+	
+	
 	
 func test_strict_equals_checks_for_type():
 	test_name("equality between mismatching types should FAIL")
