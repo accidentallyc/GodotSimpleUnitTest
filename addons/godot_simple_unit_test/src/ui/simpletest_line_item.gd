@@ -6,6 +6,8 @@ extends VBoxContainer
 @onready var rerunButton:Button = %"Rerun Button"
 @onready var collapse_toggle:Button = %"Collapse Toggle"
 
+var _runner:SimpleTest_Runner
+
 var status = &"":
 	get:
 		return status
@@ -32,25 +34,43 @@ func _ready():
 	collapse_toggle.text = collapse_txt
 	update_element()
 	_is_ready = true
+	
+	
+func set_runner(runner):
+	_runner = runner
+	_runner.on_toggle_show_passed_tests.connect(update_element)
+	
 
 func update_element():
 	# Update Status
 	statusNode.text = status.capitalize()
+	var HAS_PASSED = status.contains(&"PASS")
 	match status:
 		&"FAIL":
 			statusNode.modulate = Color.RED
 			statusNode.show()
+			HAS_PASSED = false
 		&"PASS":
 			statusNode.modulate = Color.GREEN
 			statusNode.show()
+			HAS_PASSED = true
 		&"PASS (SOLO)":
 			statusNode.modulate = Color.DARK_TURQUOISE
 			statusNode.show()
+			HAS_PASSED = true
 		&"SKIPPED":
 			statusNode.modulate = Color.MAGENTA
 			statusNode.show()
+			HAS_PASSED = true
 		_:
+			HAS_PASSED = false
 			statusNode.hide()
+		
+	# Visibility logic
+	if HAS_PASSED and _runner._should_show_passed_tests or HAS_PASSED == false:
+		self.show()
+	else:
+		self.hide()
 		
 	# Description Logic
 	var tmp = description

@@ -48,6 +48,20 @@ func test_equals_passes_when_equal_but_diff_type():
 	try(func (): expect([1,2,3]).to.equal([1,2,3]))
 	assert_passing()
 	
+func test_strict_equals_checks_for_instance():
+	var ary_1 = [1,2,3]
+	var ary_2 = [1,2,3]
+	test_name("equality between mismatching types should FAIL")
+	try(func (): expect(ary_1).to.strictly.equal(ary_2))
+	assert_fail_message("Expected [1, 2, 3](Array) to STRICTLY equal [1, 2, 3](Array)")
+	
+	try(func (): expect(ary_1).to.NOT.strictly.equal(ary_1))
+	assert_fail_message("Expected [1, 2, 3](Array) to NOT STRICTLY equal [1, 2, 3](Array)")
+	
+	try(func (): expect(ary_1).to.strictly.equal(ary_1))
+	assert_passing()
+	
+	
 	
 func test_strict_equals_checks_for_type():
 	test_name("equality between mismatching types should FAIL")
@@ -159,6 +173,34 @@ func test_key_in():
 	assert_fail_message("Expected 12 to be key of [1, 4, 5]")
 	assert_fail_message("Expected foo to be key of [1, 4, 5]")
 	assert_fail_message('Expected bar to be key of { "foo": "bar" }')
+	
+
+func test_have_size():
+	expect([1,2,3]).to.have.size(2)
+	assert_fail_message("Expected to have size 2 but got 3")
+	expect([1,2,3]).to.have.size(3)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_gt(3)
+	assert_fail_message("Expected to have size greater than 3 but got 3")
+	expect([1,2,3]).to.have.size_gt(2)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_gte(4)
+	assert_fail_message("Expected to have size greater than or equal to 4 but got 3")
+	expect([1,2,3]).to.have.size_gte(3)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_lt(3)
+	assert_fail_message("Expected to have size lesser than 3 but got 3")
+	expect([1,2,3]).to.have.size_lt(4)
+	assert_passing()
+	
+	expect([1,2,3]).to.have.size_lte(1)
+	assert_fail_message("Expected to have size lesser than or equal to 1 but got 3")
+	expect([1,2,3]).to.have.size_lte(4)
+	assert_passing()
+	
 """
 ////////////////////
 // TEST UTILITIES //
