@@ -69,20 +69,54 @@ an `expect` statement.
 | `NOT` | Inverts the results. Must be capitilized.
 | `strictly`| Equality checks are replaced with `is_same()`
 
+Note: All the functions below accept an optional message.
+
 | Function Keyword  | What |
 | ------------- | -------------
 | `equal(Variant)` | Loosely compares the 2 values using `==`
+| `gt(number)` | Performs "greater than"
+| `gte(number)` | Performs "greater than or equals"
+| `lt(number)` | Performs "lesser than"
+| `lte(number)` | Performs "lesser than or equals"
 | `truthy()` | Checks for truthiness using a ternary operator
 | `falsey()` | Checks for falsiness using a ternary operator
 | `value_in(Array or Dictionary or String)` | Checks values for item
 | `key_in(Array or Dictionary)` | Checks keys/indexes for item
-| `size()` | Checks the size of an array, dictionary or string
-| `size_gt()` | Same as size but performs "greater than"
-| `size_gte()` | Same as size but performs "greater than or equals"
-| `size_lt()` | Same as size but performs "lesser than"
-| `size_lte()` | Same as size but performs "lesser than or equals"
+| `size(number)` | Checks the size of an array, dictionary or string
+| `size_gt(number)` | Same as size but performs "greater than"
+| `size_gte(number)` | Same as size but performs "greater than or equals"
+| `size_lt(number)` | Same as size but performs "lesser than"
+| `size_lte(number)` | Same as size but performs "lesser than or equals"
 | `called()` | Checks if a `stub` has been called atleast once
 | `called_n_times(int)` | Checks if a `stub` has been called exactly `n` times
+
+### Asynchronous Tests
+
+| Function Keyword  | What |
+| ------------- | -------------
+| `wait(time in secs)` | Waits for time in secs. Internally uses `create_timer`
+| `wait_until(callable)` | Waits until the callable returns true
+
+Example:
+
+```gdscript
+class Test_Class:
+  extends Node
+	
+  var counter = 0
+	
+  func _process(delta):
+    counter += 1
+
+func it_is_async():
+  var n = Test_Class.new()
+  add_child(n)
+	
+  await wait(0.25)
+  await wait_until( func (): return n.counter >= 250)
+
+  pass
+```
 
 
 ### Hooks
@@ -163,7 +197,7 @@ func it_will_skip_others(_solo):
 Adding `_solo_suite` to _any_ test case will cause the whole suite to be run solo (ignoring all other non-solo suites).
 
 ```
-func test_a(_solo, _solo_suite): # can be compounded
+func test_a(_solo, _solo_suite):
   pass 
 
 func test_b(_solo): 
