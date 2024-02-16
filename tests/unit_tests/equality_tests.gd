@@ -201,6 +201,43 @@ func test_have_size():
 	expect([1,2,3]).to.have.size_lte(4)
 	assert_passing()
 	
+	
+func test_gt():
+	expect(2).to.be.gt(5)
+	assert_fail_message("Expected '2' to be greater than '5'")
+	expect(12).to.NOT.be.gt(5)
+	assert_fail_message("Expected '12' to be NOT greater than '5'")
+	expect(12).to.be.gt(5)
+	assert_passing()
+	
+func test_gte():
+	expect(2).to.be.gte(5)
+	assert_fail_message("Expected '2' to be greater than or equal to '5'")
+	expect(12).to.NOT.be.gte(5)
+	assert_fail_message("Expected '12' to be NOT greater than or equal to '5'")
+	expect(12).to.be.gte(5)
+	assert_passing()
+	expect(5).to.be.gte(5)
+	assert_passing()
+	
+func test_lt():
+	expect(5).to.be.lt(2)
+	assert_fail_message("Expected '5' to be lesser than '2'")
+	expect(5).to.NOT.be.lt(12)
+	assert_fail_message("Expected '5' to be NOT lesser than '12'")
+	expect(5).to.be.lt(12)
+	assert_passing()
+	
+func test_lte():
+	expect(5).to.be.lte(2)
+	assert_fail_message("Expected '5' to be lesser than or equal to '2'")
+	expect(5).to.NOT.be.lte(12)
+	assert_fail_message("Expected '5' to be NOT lesser than or equal to '12'")
+	expect(5).to.be.lte(12)
+	assert_passing()
+	expect(5).to.be.lte(5)
+	assert_passing()
+
 """
 ////////////////////
 // TEST UTILITIES //
