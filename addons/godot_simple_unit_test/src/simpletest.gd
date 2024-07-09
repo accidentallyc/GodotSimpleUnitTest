@@ -33,11 +33,15 @@ func expect_fail(description = &"Forced failure invoked"):
     __append_error(description)
     
 ## Allows you to wait for a certain condition to happen
-func wait_until(condition:Callable, timeout = 5000):
+func wait_until(condition:Callable, timeout = 5):
+    var time_elapsed = 0
     while true:
         if condition.call():
-            return
+            return true
         await get_tree().create_timer(0.25).timeout
+        time_elapsed += 0.25
+        if time_elapsed >= timeout:
+            return false
 
 func wait(timeout = 5000):
     await get_tree().create_timer(timeout).timeout
