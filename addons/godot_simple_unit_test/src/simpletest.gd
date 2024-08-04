@@ -5,7 +5,7 @@ extends Node
 ## This cannot be run by itself
 class_name SimpleTest
 
-static var SimpleTest_LineItemTscn = preload("./ui/simpletest_line_item.tscn")
+var SimpleTest_LineItemTscn = preload("res://addons/godot_simple_unit_test/src/ui/simpletest_line_item.tscn")
 
 const EMPTY_ARRAY = []
 
