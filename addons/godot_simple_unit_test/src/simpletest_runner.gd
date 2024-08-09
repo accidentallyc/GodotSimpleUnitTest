@@ -7,7 +7,7 @@ extends SimpleTest
 ## Do not extend this. Use as is.
 class_name SimpleTest_Runner
 
-static var SimpleTest_CanvasTscn := preload("./ui/simpletest_canvas.tscn")
+
 
 var _tests = []
 var _canvas
@@ -20,7 +20,8 @@ signal on_toggle_show_passed_tests
 func _ready():
     if Engine.is_editor_hint():
         return
-        
+    
+    var SimpleTest_CanvasTscn = load("res://addons/godot_simple_unit_test/src/ui/simpletest_canvas.tscn")
     _canvas = SimpleTest_CanvasTscn.instantiate()
     _canvas._runner = self
     _canvas.ready.connect(func (): _begin_test_runs())
