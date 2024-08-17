@@ -21,11 +21,11 @@ var be := self
 var IS := self
 var are := self
 var will := self
-var NOT:
+var NOT: SimpleTest_ExpectBuilder:
     get:
         __s.is_upright = false
         return self
-var strictly = self:
+var strictly := self:
     get:
         __s.is_strict = true
         return self
@@ -229,8 +229,10 @@ func key_in(thing, description: String = &""):
 """
 
 class __INTERNAL_STATE__:
-    var is_upright = true
-    var is_strict = false
+    ## If upright is false, the identity function
+    ## inverts the result
+    var is_upright := true
+    var is_strict := false
     
     func to_upr(a,b):
         return a if is_upright  else b
@@ -246,4 +248,4 @@ class __INTERNAL_STATE__:
             r = LambdaOperations.equals(a,b)
         return identity(r)
         
-var __s = __INTERNAL_STATE__.new()
+var __s := __INTERNAL_STATE__.new()

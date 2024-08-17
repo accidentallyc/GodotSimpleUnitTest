@@ -24,8 +24,23 @@ func _ready():
     var SimpleTest_CanvasTscn = load("res://addons/godot_simple_unit_test/src/ui/simpletest_canvas.tscn")
     _canvas = SimpleTest_CanvasTscn.instantiate()
     _canvas._runner = self
-    _canvas.ready.connect(func (): _begin_test_runs())
     add_child(_canvas)
+    await _canvas.ready_future.completed()
+    _begin_test_runs()
+    
+## Each test instance will call this function on enter    
+func register_test(test:SimpleTest, request_solo_suite:bool,request_to_skip_suite:bool):
+    _has_solo_test_suites = _has_solo_test_suites or request_solo_suite
+    
+    if request_solo_suite and request_to_skip_suite:
+        printerr("Test(%s) has both solo and skip controls. SKIP will be ignored" % test.name)
+        request_to_skip_suite = false
+        
+    _tests.append({
+        "test":test,
+        "solo": request_solo_suite,
+        "skip": request_to_skip_suite
+    })
     
     
 func _begin_test_runs():
@@ -63,20 +78,6 @@ func _begin_test_runs():
         "name":name,
         "passing":  total_test_count - failed_test_count,
         "total": total_test_count,
-    })
-        
-        
-func register_test(test:SimpleTest, request_solo_suite:bool,request_to_skip_suite:bool):
-    _has_solo_test_suites = _has_solo_test_suites or request_solo_suite
-    
-    if request_solo_suite and request_to_skip_suite:
-        printerr("Test(%s) has both solo and skip controls. SKIP will be ignored" % test.name)
-        request_to_skip_suite = false
-        
-    _tests.append({
-        "test":test,
-        "solo": request_solo_suite,
-        "skip": request_to_skip_suite
     })
 
 """

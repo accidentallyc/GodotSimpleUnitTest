@@ -35,5 +35,5 @@ class Test_Class:
     
     var counter = 0
     
-    func _process(delta):
+    func _process(_delta):
         counter += 1

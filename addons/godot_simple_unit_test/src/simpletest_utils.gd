@@ -9,10 +9,27 @@ class Case:
     var fn:String
     var args:Array
     var last_run_errors:Array
+    
+## Locates the closest runner up in the tree
+## This is useful for when the runners are implemented
+## in a tree like structure
+static func find_closest_runner(node:Node):
+    var runner:Node = node
+    var max_iters := 999
+    
+    for i in max_iters:
+        assert(max_iters - i, "Reached maximum iteration count")
+        if runner.has_method("register_test"):
+            return runner
+        
+        runner = runner.get_parent()
+        if runner == null or runner is Window:
+            break
+    assert(0, "SimpleTest %s is not a child of a Test Runner" % node.name)
+    return null
 
-
-static func get_test_cases(script):
-    var cases = []
+static func get_test_cases(script)->Array[Case]:
+    var cases:Array[Case] = []
     for method in script.get_method_list():
         var method_name = method.name
         var args = method.args

@@ -16,14 +16,16 @@ signal on_finished_full_suite_run()
 ## Expect Functions ##
 ######################
 """
+
+## Create a expect builder to begin assertions against
 func expect(value)->SimpleTest_ExpectBuilder:
     return SimpleTest_ExpectBuilder.new(self,value)
     
-    
+## Asserts that orphan nodes should be equal to an amount
 func expect_orphan_nodes(n):
     Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n
     
-    
+## Asserts that there should be no orphan nodes
 func expect_no_orphan_nodes():
     expect_orphan_nodes(0)
     
@@ -86,30 +88,40 @@ var _test_case_line_item_map = {}
 var _runner
 
 ## All test cases
-var _cases
+var cases:Array[SimpleTest_Utils.Case]
 ## All tests cases that can be executed (solo and not skipped)
-var _cases_runnable
-## All solo test cases
-var _cases_solo
-## All skipped test cases
-var _cases_skip
+var _cases_runnable:Array[SimpleTest_Utils.Case]
 ## All failed test runs (populated per run)
-var _cases_failed
+var _cases_failed:Array[SimpleTest_Utils.Case]
+
+## Closest test runner found 
+@onready var parent_runner = SimpleTest_Utils.find_closest_runner(self) as SimpleTest
+
 """
 NOTE: This _has_ to be overriden by runner
 """
 func _enter_tree():
     pass
 
-
 func _ready():
-    __load_test_cases()
+    cases =  SimpleTest_Utils.get_test_cases(self)
+    var cases_solo = cases.filter(func(c): return c.solo )
+    if cases_solo.size():
+        for case in cases:
+            case.skipped = not(case.solo)
     
-    _cases.any(func (c): return c.solo_suite)
+    _cases_runnable = cases_solo if cases_solo.size() else cases
+    _cases_runnable = cases.filter(func(c): return c.skipped == false )
+    
+    cases.any(func (c): return c.solo_suite)
 
-    var request_to_run_as_solo_suite = _cases.any(func (c): return c.solo_suite)
-    var request_to_skip_suite = _cases.any(func (c): return c.skip_suite)
-    owner.register_test(self,request_to_run_as_solo_suite, request_to_skip_suite)
+    var request_to_run_as_solo_suite = cases.any(func (c): return c.solo_suite)
+    var request_to_skip_suite = cases.any(func (c): return c.skip_suite)
+    parent_runner.register_test(
+        self,
+        request_to_run_as_solo_suite, 
+        request_to_skip_suite
+    )
     
 ## Override to run code before any of the tests in this suite
 func _before():
@@ -156,7 +168,7 @@ func __on_main_line_item_ready():
     __set_run_state(_cases_runnable.size())
     
     _cases_failed = []
-    for case in _cases:
+    for case in cases:
         var case_ln_item = SimpleTest_LineItemTscn.instantiate()
         case_ln_item.set_runner(_runner)
         _test_case_line_item_map[case.fn] = case_ln_item
@@ -298,20 +310,6 @@ func __run_all_tests():
     _ln_item.clear_blocks()
     __on_main_line_item_ready()
     
-
-func __load_test_cases():
-    _cases = SimpleTest_Utils.get_test_cases(self)
-    _cases_solo = _cases.filter(func(c): return c.solo )
-    
-    if _cases_solo.size():
-        for case in _cases:
-            case.skipped = not(case.solo)
-    
-    _cases_skip = _cases.filter(func(c): return c.skipped )
-    
-    _cases_runnable = _cases_solo if _cases_solo.size() else _cases
-    _cases_runnable = _cases.filter(func(c): return c.skipped == false )
-
 func __assert(result:bool, description, default):
     if !result:
         _errors.append(description if description else default)

@@ -4,6 +4,11 @@ extends CanvasLayer
 
 var _runner
 
+var ready_future:Future = Future.new()
+
+func _ready() -> void:
+    ready_future.resolve(true)
+
 func add_block(block:Control):
     container.add_block.call_deferred(block)
 
