@@ -44,18 +44,22 @@ func register_test(test:SimpleTest, request_solo_suite:bool,request_to_skip_suit
 	
 	
 func _begin_test_runs():
-	var entries = [] 
+	var entries:Array 
 	
-	for test in _tests:
-		if _has_solo_test_suites:
-			if test.solo:
-				entries.append(test)
-			# else allow it to be filtered out
-		else: # else append everything
-			entries.append(test)
+	#region SOLO_REQUESTED
+	if _has_solo_test_suites:
+		for test in _tests:
+			if test.solo: entries.append(test)
+	#endregion
 	
+	#region NO_SOLO
+	else: # else append everything
+		entries = _tests
+	#endregion
 	
+	#region REMOVE_SKIPPED_TESTS
 	entries = entries.filter(func(c): return !c.skip)
+	#endregion
 	
 	var failed_test_count = 0
 	var total_test_count = 0

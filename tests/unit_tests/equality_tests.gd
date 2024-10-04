@@ -1,5 +1,9 @@
 extends SimpleTest
 
+	
+func test_fails():
+	expect_fail()
+
 ## Canary test. The assertion in this test build on top of eachother
 func test_foundation_test():
 	test_name("FOUNDATION TEST - make sure this passes")
