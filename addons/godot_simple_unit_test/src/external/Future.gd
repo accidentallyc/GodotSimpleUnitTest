@@ -12,6 +12,8 @@ var noop = func(): return
 var success_cb:Callable = noop
 var fail_cb:Callable = noop
 
+var id = randf()
+
 func _init(initial_awaitable:Callable = noop):
 	if not is_same(initial_awaitable,noop):
 		_wait(0.01).connect(func ():
@@ -112,15 +114,3 @@ func reject(err = null):
 		_: assert(false,"Then callbacks must be created with between 0-1 args")
 	
 	on_resolved.emit()
-	
-	
-class Rejection:
-	extends RefCounted
-	var payload = null
-	var message
-	func _init(_message:String, _payload = null):
-		payload = _payload
-		message = _message
-		
-	func _to_string() -> String:
-		return str(message,"(",payload,")")

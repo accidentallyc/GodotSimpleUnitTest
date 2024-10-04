@@ -9,7 +9,7 @@ class_name SimpleTest_Runner
 
 
 
-var _tests = []
+var _tests:Array = []
 var _canvas
 var _solo_tests = []
 var _has_solo_test_suites = false
@@ -22,6 +22,7 @@ func _ready():
 		return
 	
 	var SimpleTest_CanvasTscn = load("res://addons/godot_simple_unit_test/src/ui/simpletest_canvas.tscn")
+	
 	_canvas = SimpleTest_CanvasTscn.instantiate()
 	_canvas._runner = self
 	add_child(_canvas)

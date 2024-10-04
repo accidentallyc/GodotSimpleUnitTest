@@ -42,7 +42,8 @@ func wait_until(condition:Callable, timeout = 5):
 		if time_elapsed >= timeout:
 			return false
 
-func wait(timeout = 5000):
+# Default 1 second
+func wait(timeout = 1):
 	await get_tree().create_timer(timeout).timeout
 	return
 	
@@ -129,9 +130,26 @@ func build_gui_element(runner:SimpleTest_Runner):
 	_ln_item.description = name
 
 	_ln_item.status = &"PASS"
-	await _ln_item.ready_promise
-	#_ln_item.ready.connect(run_test_cases, Object.CONNECT_ONE_SHOT)
+	_ln_item.rerunButton.show()
+	_ln_item.rerunButton.__method_name = "__run_all_tests"
+	_ln_item.rerunButton.__test = self
 	
+	for case in cases:
+		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
+		case_ln_item.set_runner(runner)
+		
+		#register to dict
+		_test_case_line_item_map[case.fn] = case_ln_item
+		
+		case_ln_item.case = case
+		case_ln_item.description = case.name
+		case_ln_item.rerunButton.__method_name = case.fn
+		case_ln_item.rerunButton.__case = case
+		case_ln_item.rerunButton.__test = self
+		case_ln_item.rerunButton.show()
+		
+		_ln_item.add_block(case_ln_item)
+		
 	return _ln_item
 	
 	
@@ -143,32 +161,11 @@ func __set_run_state(expected_count:int):
 
 func run_test_cases() -> SimpleTest_Promise:
 	var promise := SimpleTest_Promise.new()
-	_ln_item.rerunButton.show()
-	_ln_item.rerunButton.__method_name = "__run_all_tests"
-	_ln_item.rerunButton.__test = self
-
 	__set_run_state(_cases_runnable.size())
 	
 	_cases_failed = []
 	for case in cases:
-		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
-		case_ln_item.set_runner(_runner)
-		_test_case_line_item_map[case.fn] = case_ln_item
-		
-		case_ln_item.case = case
-		case_ln_item.description = case.name
-		case_ln_item.ready.connect(
-			func(): 
-				case_ln_item.rerunButton.show()
-				case_ln_item.rerunButton.__method_name = case.fn
-				case_ln_item.rerunButton.__case = case
-				case_ln_item.rerunButton.__test = self
-		, Object.CONNECT_ONE_SHOT)
-		
-		_ln_item.add_block(case_ln_item)
-		
-		await case_ln_item.ready
-		await __run_test(case, case_ln_item)
+		await __run_test(case)
 		
 		var has_error = _errors.size() > 0
 		if has_error:
@@ -190,7 +187,8 @@ func run_test_cases() -> SimpleTest_Promise:
 	promise.resolve()
 	return promise
 		
-func __run_test(case, ln_item):
+func __run_test(case):
+	var ln_item = _test_case_line_item_map[case.fn]
 	"""
 	this is a transient field. this only works if running sequentially
 	"""
@@ -289,7 +287,7 @@ func __run_test_run(case, ln_item):
 	
 func __run_single_test(method_name,ln_item):
 	__set_run_state(1)
-	await __run_test(method_name,ln_item)
+	await __run_test(method_name)
 	
 	
 func __run_all_tests():
