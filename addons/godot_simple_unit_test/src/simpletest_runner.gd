@@ -65,8 +65,10 @@ func _begin_test_runs():
 	var total_test_count = 0
 	for entry in entries:
 		var test = entry.test
-		test.__on_test_initialize(self)
-		await test.on_finished_full_suite_run
+		var gui = await test.build_gui_element(self)
+		add_block(gui)
+		test.set_runner(self)
+		await test.run_test_cases()
 		total_test_count += test._cases_runnable.size()
 		failed_test_count += test._cases_failed.size()
 		

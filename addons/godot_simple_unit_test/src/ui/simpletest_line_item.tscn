@@ -3,10 +3,15 @@
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/ui/simpletest_line_item.gd" id="1_0ootq"]
 [ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/ui/simpletest_rerun_button.gd" id="2_aoudm"]
 
-[node name="VBoxContainer - Line Item" type="VBoxContainer"]
+[node name="VBoxContainer - Line Item" type="VBoxContainer" node_paths=PackedStringArray("statusNode", "descpNode", "childContainerNode", "rerunButton", "collapse_toggle")]
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_0ootq")
+statusNode = NodePath("HBoxContainer - Line Item/Status")
+descpNode = NodePath("HBoxContainer - Line Item/Description")
+childContainerNode = NodePath("MarginContainer/Children Container")
+rerunButton = NodePath("HBoxContainer - Line Item/Rerun Button")
+collapse_toggle = NodePath("HBoxContainer - Line Item/Collapse Toggle")
 
 [node name="HBoxContainer - Line Item" type="HBoxContainer" parent="."]
 layout_mode = 2

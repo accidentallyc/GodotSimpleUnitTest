@@ -9,8 +9,6 @@ var SimpleTest_LineItemTscn = preload("res://addons/godot_simple_unit_test/src/u
 
 const EMPTY_ARRAY = []
 
-signal on_finished_full_suite_run()
-
 """
 ######################
 ## Expect Functions ##
@@ -122,35 +120,19 @@ func _ready():
 		request_to_skip_suite
 	)
 	
-## Override to run code before any of the tests in this suite
-func _before():
-	pass
-	
-	
-func _before_each():
-	pass
-	
-	
-## Override to run code after each test case
-func _after():
-	pass
-	
-	
-## Override to run code after all the tests have been run
-func _after_each():
-	pass
-	
-
-func __on_test_initialize(runner:SimpleTest_Runner):
-	_ln_item = SimpleTest_LineItemTscn.instantiate()
+func set_runner(runner:SimpleTest_Runner):
+	_runner = runner
 	_ln_item.set_runner(runner)
+
+func build_gui_element(runner:SimpleTest_Runner):
+	_ln_item = SimpleTest_LineItemTscn.instantiate()
 	_ln_item.description = name
 
 	_ln_item.status = &"PASS"
-	_ln_item.ready.connect(__on_main_line_item_ready, Object.CONNECT_ONE_SHOT)
+	await _ln_item.ready_promise
+	#_ln_item.ready.connect(run_test_cases, Object.CONNECT_ONE_SHOT)
 	
-	_runner = runner
-	_runner.add_block(_ln_item)
+	return _ln_item
 	
 	
 var __run_state:Run_State
@@ -159,7 +141,8 @@ func __set_run_state(expected_count:int):
 	__run_state.expected_count = expected_count
 
 
-func __on_main_line_item_ready():
+func run_test_cases() -> SimpleTest_Promise:
+	var promise := SimpleTest_Promise.new()
 	_ln_item.rerunButton.show()
 	_ln_item.rerunButton.__method_name = "__run_all_tests"
 	_ln_item.rerunButton.__test = self
@@ -192,8 +175,6 @@ func __on_main_line_item_ready():
 			_cases_failed.append(case)
 			
 		
-	on_finished_full_suite_run.emit()
-	
 	_ln_item.status = &"FAIL" if _cases_failed.size() else &"PASS"
 	
 	# default to collapsed if no failures
@@ -205,6 +186,9 @@ func __on_main_line_item_ready():
 		"passing": _cases_runnable.size() - _cases_failed.size(),
 		"total": _cases_runnable.size(),
 	})
+	
+	promise.resolve()
+	return promise
 		
 func __run_test(case, ln_item):
 	"""
@@ -213,8 +197,8 @@ func __run_test(case, ln_item):
 	_errors = []
 	case.last_run_errors = []
 	
-	if __run_state.completed_count == 0:
-		_before()
+	if __run_state.completed_count == 0 and has_method("_before"):
+		call("_before")
 		
 	if case.skipped:
 		__run_test_skip(case, ln_item)
@@ -222,8 +206,9 @@ func __run_test(case, ln_item):
 		await __run_test_run(case, ln_item)
 		__run_state.completed_count += 1
 		
-	if __run_state.completed_count == __run_state.expected_count:
-		_after()
+	if __run_state.completed_count == __run_state.expected_count \
+		and has_method("_after"):
+		call("_after")
 		
 	case.last_run_errors.append_array(_errors)
 		
@@ -261,7 +246,8 @@ func __run_test_run(case, ln_item):
 	"""
 	Perform the actual test
 	"""
-	_before_each()
+	if has_method("_before_each"):
+		call("_before_each")
 	
 	var args = []
 	
@@ -280,7 +266,8 @@ func __run_test_run(case, ln_item):
 	
 	await self.callv(method_name, args)
 	
-	_after_each()
+	if has_method("_after_each"): 
+		call("_after_each")
 		
 	"""
 	Update the GUI elements. The results of the test are collected at
@@ -307,7 +294,7 @@ func __run_single_test(method_name,ln_item):
 	
 func __run_all_tests():
 	_ln_item.clear_blocks()
-	__on_main_line_item_ready()
+	run_test_cases()
 	
 func __assert(result:bool, description, default):
 	if !result:
