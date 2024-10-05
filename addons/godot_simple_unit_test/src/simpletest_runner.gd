@@ -78,7 +78,6 @@ func _begin_test_runs():
 			sync_gui()
 			)
 		
-		
 		await test.run_test_cases()
 	sync_gui()
 		

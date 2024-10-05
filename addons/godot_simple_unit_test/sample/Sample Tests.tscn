@@ -8,8 +8,13 @@
 [node name="Sample Test" type="Node"]
 script = ExtResource("1_yi6wn")
 
-[node name="Test Suite 1" type="Node" parent="."]
+[node name="Test Suite 1" type="Node" parent="." node_paths=PackedStringArray("texture_rect")]
 script = ExtResource("2_ou246")
+texture_rect = NodePath("Texture Rect")
+
+[node name="Texture Rect" type="TextureRect" parent="Test Suite 1"]
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Test Group" type="Node" parent="."]
 
