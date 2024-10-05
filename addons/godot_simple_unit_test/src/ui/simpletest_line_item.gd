@@ -14,14 +14,14 @@ var status = &"":
 		return status
 	set(v):
 		status = v
-		update_element()
+		sync_gui()
 			
 var description = &"":
 	get:
 		return description
 	set(v):
 		description = v
-		update_element()
+		sync_gui()
 
 var _is_ready = false
 var parent_ln_item
@@ -31,19 +31,24 @@ const uncollapse_txt = &" ➕ "
 
 var ready_promise:SimpleTest_Promise = SimpleTest_Promise.new()
 
+signal on_rerun_request()
+
+func _enter_tree() -> void:
+	rerunButton.pressed.connect(func (): on_rerun_request.emit())
+
 func _ready():
 	collapse_toggle.text = collapse_txt
 	_is_ready = true
 	ready_promise.resolve()
-	update_element()
+	sync_gui()
 	
 	
 func set_runner(runner):
 	_runner = runner
-	_runner.on_toggle_show_passed_tests.connect(update_element)
+	_runner.on_toggle_show_passed_tests.connect(sync_gui)
 	
 
-func update_element():
+func sync_gui():
 	if !_is_ready: return
 	
 	# Update Status

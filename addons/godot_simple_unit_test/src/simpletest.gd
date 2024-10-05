@@ -15,21 +15,26 @@ const EMPTY_ARRAY = []
 ######################
 """
 
+
 ## Create a expect builder to begin assertions against
 func expect(value)->SimpleTest_ExpectBuilder:
 	return SimpleTest_ExpectBuilder.new(self,value)
 	
 ## Asserts that orphan nodes should be equal to an amount
-func expect_orphan_nodes(n):
-	Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n
+func expect_orphan_nodes(n, description = &"Count of orphan nodes did not match"):
+	__assert(
+		Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT) == n,
+		description,
+		description
+	)
 	
 ## Asserts that there should be no orphan nodes
 func expect_no_orphan_nodes():
-	expect_orphan_nodes(0)
+	expect_orphan_nodes(0, &"Found orphan nodes")
 	
 ## Call to force a test to fail. 
 func expect_fail(description = &"Forced failure invoked"):
-	__append_error(description)
+	__assert(false,description, description)
 	
 ## Allows you to wait for a certain condition to happen
 func wait_until(condition:Callable, timeout = 5):
@@ -89,8 +94,6 @@ var _runner
 var cases:Array[SimpleTest_Utils.Case]
 ## All tests cases that can be executed (solo and not skipped)
 var _cases_runnable:Array[SimpleTest_Utils.Case]
-## All failed test runs (populated per run)
-var _cases_failed:Array[SimpleTest_Utils.Case]
 
 ## Closest test runner found 
 @onready var parent_runner = SimpleTest_Utils.find_closest_runner(self) as SimpleTest
@@ -103,6 +106,12 @@ func _enter_tree():
 
 func _ready():
 	cases =  SimpleTest_Utils.get_test_cases(self)
+	
+	for c in cases:
+		# register in table
+		var case:SimpleTest_Utils.Case = c
+		case_table[case.fn] = case
+	
 	var cases_solo = cases.filter(func(c): return c.solo )
 	if cases_solo.size():
 		for case in cases:
@@ -111,8 +120,6 @@ func _ready():
 	_cases_runnable = cases_solo if cases_solo.size() else cases
 	_cases_runnable = cases.filter(func(c): return c.skipped == false )
 	
-	cases.any(func (c): return c.solo_suite)
-
 	var request_to_run_as_solo_suite = cases.any(func (c): return c.solo_suite)
 	var request_to_skip_suite = cases.any(func (c): return c.skip_suite)
 	parent_runner.register_test(
@@ -131,21 +138,22 @@ func build_gui_element(runner:SimpleTest_Runner):
 
 	_ln_item.status = &"PASS"
 	_ln_item.rerunButton.show()
-	_ln_item.rerunButton.__method_name = "__run_all_tests"
-	_ln_item.rerunButton.__test = self
 	
 	for case in cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
 		case_ln_item.set_runner(runner)
+		
+		case_ln_item.on_rerun_request.connect(func ():
+			await run_test_case(case)
+			case_ln_item.sync_gui()
+			sync_gui()
+			)
 		
 		#register to dict
 		_test_case_line_item_map[case.fn] = case_ln_item
 		
 		case_ln_item.case = case
 		case_ln_item.description = case.name
-		case_ln_item.rerunButton.__method_name = case.fn
-		case_ln_item.rerunButton.__case = case
-		case_ln_item.rerunButton.__test = self
 		case_ln_item.rerunButton.show()
 		
 		_ln_item.add_block(case_ln_item)
@@ -157,44 +165,52 @@ var __run_state:Run_State
 func __set_run_state(expected_count:int):
 	__run_state = Run_State.new()
 	__run_state.expected_count = expected_count
-
-
-func run_test_cases() -> SimpleTest_Promise:
-	var promise := SimpleTest_Promise.new()
-	__set_run_state(_cases_runnable.size())
 	
-	_cases_failed = []
-	for case in cases:
-		await __run_test(case)
-		
-		var has_error = _errors.size() > 0
-		if has_error:
-			_cases_failed.append(case)
+	
+func get_stats():
+	var total = _cases_runnable.size()
+	var failed = 0
+	for key in case_table:
+		var case:SimpleTest_Utils.Case = case_table[key]
+		if case.last_errors:
+			failed += 1
 			
+	return {
+		"total": total,
+		"failed": failed,
+		"passed": total - failed
+	}
+	
+	
+func sync_gui():
+	var stats = get_stats()
 		
-	_ln_item.status = &"FAIL" if _cases_failed.size() else &"PASS"
-	
-	# default to collapsed if no failures
-	# else open
-	_ln_item.set_collapse(not(_cases_failed))
-	
 	_ln_item.description = &"{name} ({passing}/{total} passed)".format({
 		"name":name,
-		"passing": _cases_runnable.size() - _cases_failed.size(),
-		"total": _cases_runnable.size(),
+		"passing": stats.passed,
+		"total": stats.total,
 	})
 	
-	promise.resolve()
-	return promise
-		
-func __run_test(case):
-	var ln_item = _test_case_line_item_map[case.fn]
-	"""
-	this is a transient field. this only works if running sequentially
-	"""
-	_errors = []
-	case.last_run_errors = []
+	_ln_item.status = &"FAIL" if stats.failed else &"PASS"
 	
+	# default to collapsed if no failures else open
+	_ln_item.set_collapse(not(stats.failed))
+	_ln_item.sync_gui()
+
+
+func run_test_cases():
+	__set_run_state(_cases_runnable.size())
+	
+	for case in cases:
+		await run_test_case(case)
+	sync_gui()
+		
+## Contains the test_case_names plus the last result of the last
+## test execution
+var case_table := {}
+func run_test_case(case):
+	var ln_item = _test_case_line_item_map[case.fn]
+
 	if __run_state.completed_count == 0 and has_method("_before"):
 		call("_before")
 		
@@ -208,7 +224,6 @@ func __run_test(case):
 		and has_method("_after"):
 		call("_after")
 		
-	case.last_run_errors.append_array(_errors)
 		
 	"""
 	Update test name - TODO move this from function to param
@@ -234,7 +249,7 @@ func __run_test_skip(case, ln_item):
 	ln_item.clear_blocks()
 	
 			
-func __run_test_run(case, ln_item):
+func __run_test_run(case:SimpleTest_Utils.Case, ln_item):
 	var method_name = case.fn
 	
 	
@@ -262,7 +277,17 @@ func __run_test_run(case, ln_item):
 					}))
 		args.append(null)		
 	
+	#region ACTUAL_TEST
+	"""
+	These are transient fields. This is where all the errors are shoved in
+	during a test run. This means that all the test cases must be run NOT
+	in parallel.
+	"""
+	_errors.clear()
+	case.last_errors.clear()
 	await self.callv(method_name, args)
+	case.last_errors.append_array(_errors)
+	#endregion
 	
 	if has_method("_after_each"): 
 		call("_after_each")
@@ -287,7 +312,7 @@ func __run_test_run(case, ln_item):
 	
 func __run_single_test(method_name,ln_item):
 	__set_run_state(1)
-	await __run_test(method_name)
+	await run_test_case(method_name)
 	
 	
 func __run_all_tests():
@@ -297,8 +322,3 @@ func __run_all_tests():
 func __assert(result:bool, description, default):
 	if !result:
 		_errors.append(description if description else default)
-		
-		
-func __append_error(description):
-	_errors.append(description)
-	

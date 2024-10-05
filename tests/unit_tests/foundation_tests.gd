@@ -1,5 +1,12 @@
 extends SimpleTest
 
+var ctr = 0
+func test_fails(_solo,_solo_suite):
+	if ctr == 0:
+		expect_fail()
+	ctr += 1
+	pass
+
 func test_ln_item_is_assigned():
 	await _ln_item.ready_promise.completed()
 	assert(_ln_item is Control,	"Line item must a text control")

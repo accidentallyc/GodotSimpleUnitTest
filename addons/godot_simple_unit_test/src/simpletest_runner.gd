@@ -70,8 +70,9 @@ func _begin_test_runs():
 		add_block(gui)
 		test.set_runner(self)
 		await test.run_test_cases()
-		total_test_count += test._cases_runnable.size()
-		failed_test_count += test._cases_failed.size()
+		var stats = test.get_stats()
+		total_test_count += stats.total
+		failed_test_count += stats.failed
 		
 	if total_test_count == 0:
 		_canvas.container.description = "No tests yet. Add a new node of type SimpleTest to start 😁"

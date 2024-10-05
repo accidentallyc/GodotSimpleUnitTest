@@ -1,6 +1,7 @@
 class_name SimpleTest_Utils
 
 class Case:
+	extends RefCounted
 	var skipped:bool
 	var solo:bool
 	var solo_suite:bool
@@ -8,7 +9,21 @@ class Case:
 	var name:String
 	var fn:String
 	var args:Array
-	var last_run_errors:Array
+	
+	var last_errors:Array[String] = []
+	
+
+## Given a the name of a function as an "anchor point" it gets the 
+## calling function
+static func guess_test_case_name_from_stack(fn_name:String):
+	var stack = get_stack()
+	for i in stack.size():
+		var layer = stack[i]
+		if stack.function == fn_name:
+			var next_layer  = stack[i + 1]
+			return next_layer.function
+	return null
+	
 	
 ## Locates the closest runner up in the tree
 ## This is useful for when the runners are implemented
