@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://d066i1k1pqnqd"]
+
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_j3dgf"]
+[ext_resource type="Script" path="res://tests/futures/Future.test.gd" id="2_dy1t6"]
+
+[node name="Promises" type="Node"]
+script = ExtResource("1_j3dgf")
+
+[node name="Basic Test" type="Node" parent="."]
+script = ExtResource("2_dy1t6")

@@ -13,6 +13,9 @@ It *doesn't* have any of the bells and whistles. Just the ability to run scenes 
 I didn't want a very editor heavy plugin. I wanted something lightweight, simple and easy to just vomit. If you need a fully fleshed out 
 Unit Testing Framework, try [GUT](https://github.com/bitwes/Gut) or [GdUnit4](https://github.com/MikeSchulze/gdUnit4)
 
+I also wanted to unit tests that are not run on the editor. That way I can
+set up the test scene the same way I would do on an actual scene.
+
 ## _Note_
 Conflicting classes when upgrading?
 - I've renamed the root plugin from `godot_simple_test` to `godot_simple_unit_test`

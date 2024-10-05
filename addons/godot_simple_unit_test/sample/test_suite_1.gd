@@ -1,5 +1,7 @@
 extends SimpleTest
 
+@export var texture_rect:TextureRect
+
 func it_has_equality_tests():
 	expect(true).to.equal(true)
 	expect(true).to.NOT.equal(false)
