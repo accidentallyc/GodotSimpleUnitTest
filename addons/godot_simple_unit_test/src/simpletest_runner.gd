@@ -35,7 +35,7 @@ func _ready():
 	_begin_test_runs()
 	
 ## Each test instance will call this function on enter    
-func register_test(test:SimpleTest, request_solo_suite:bool,request_to_skip_suite:bool):
+func register_test(test, request_solo_suite:bool,request_to_skip_suite:bool):
 	_has_solo_test_suites = _has_solo_test_suites or request_solo_suite
 	
 	if request_solo_suite and request_to_skip_suite:

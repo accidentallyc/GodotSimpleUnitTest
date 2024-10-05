@@ -45,5 +45,5 @@ theme_override_constants/margin_left = 25
 unique_name_in_owner = true
 layout_mode = 2
 
-[connection signal="button_up" from="HBoxContainer - Line Item/Collapse Toggle" to="." method="toggle_collapse"]
+[connection signal="button_up" from="HBoxContainer - Line Item/Collapse Toggle" to="." method="_on_collapse_toggle_button_up"]
 [connection signal="button_up" from="HBoxContainer - Line Item/Rerun Button" to="HBoxContainer - Line Item/Rerun Button" method="_on_button_up"]

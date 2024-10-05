@@ -9,13 +9,17 @@ var SimpleTest_LineItemTscn = preload("res://addons/godot_simple_unit_test/src/u
 
 const EMPTY_ARRAY = []
 
+signal on_case_rerun_request()
+
+## If this is the first time the funcs have been executed
+var is_first_run:bool = true # Useful for differentiating user behavior
+
 """
 ######################
 ## Expect Functions ##
 ######################
 """
 
-signal on_case_rerun_request()
 
 ## Create a expect builder to begin assertions against
 func expect(value)->SimpleTest_ExpectBuilder:
@@ -195,8 +199,11 @@ func sync_gui():
 	
 	_ln_item.status = &"FAIL" if stats.failed else &"PASS"
 	
-	# default to collapsed if no failures else open
-	_ln_item.set_collapse(not(stats.failed))
+	if is_first_run:
+		# The default behavior is to show only failed tests to the
+		# user - but if they click the re-runs we should not override 
+		# their collapse decisions
+		_ln_item.set_collapse(not(stats.failed))
 	_ln_item.sync_gui()
 
 
@@ -206,6 +213,7 @@ func run_test_cases():
 	for case in cases:
 		await run_test_case(case)
 	sync_gui()
+	is_first_run = false
 		
 ## Contains the test_case_names plus the last result of the last
 ## test execution
@@ -309,8 +317,7 @@ func __run_test_run(case:SimpleTest_Utils.Case, ln_item):
 		var f_line_item = SimpleTest_LineItemTscn.instantiate()
 		f_line_item.set_runner(_runner)
 		f_line_item.description = f
-		ln_item.add_block(f_line_item)
-		
+		ln_item.add_block(f_line_item)	
 	
 func __run_single_test(method_name,ln_item):
 	__set_run_state(1)

@@ -37,7 +37,7 @@ func _enter_tree() -> void:
 	rerunButton.pressed.connect(func (): on_rerun_request.emit())
 
 func _ready():
-	collapse_toggle.text = collapse_txt
+	collapse_toggle.text = uncollapse_txt
 	_is_ready = true
 	ready_promise.resolve()
 	sync_gui()
@@ -111,5 +111,5 @@ func set_collapse(is_collapse:bool):
 	collapse_toggle.text = collapse_txt
 		
 
-func toggle_collapse(force_collapse = null):
+func _on_collapse_toggle_button_up(force_collapse = null):
 	set_collapse(childContainerNode.visible)
