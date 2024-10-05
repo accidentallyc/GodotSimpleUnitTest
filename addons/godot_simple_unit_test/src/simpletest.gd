@@ -15,6 +15,7 @@ const EMPTY_ARRAY = []
 ######################
 """
 
+signal on_case_rerun_request()
 
 ## Create a expect builder to begin assertions against
 func expect(value)->SimpleTest_ExpectBuilder:
@@ -147,6 +148,7 @@ func build_gui_element(runner:SimpleTest_Runner):
 			await run_test_case(case)
 			case_ln_item.sync_gui()
 			sync_gui()
+			on_case_rerun_request.emit()
 			)
 		
 		#register to dict
