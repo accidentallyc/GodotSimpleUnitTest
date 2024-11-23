@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cuw5togolwjbx"]
+
+[ext_resource type="Script" path="res://addons/godot_simple_unit_test/src/simpletest_runner.gd" id="1_g0x0b"]
+[ext_resource type="Script" path="res://tests/nested_runner/test_measure.gd" id="2_tgemu"]
+
+[node name="Nested Runner" type="Node"]
+script = ExtResource("1_g0x0b")
+
+[node name="Level 1 Pass Test" type="Node" parent="."]
+script = ExtResource("2_tgemu")
+testName = "Level 1 Pass Test"
+
+[node name="Level 1 Fail Test" type="Node" parent="."]
+script = ExtResource("2_tgemu")
+testName = "Level 1 Pass Test"
+shouldPass = false

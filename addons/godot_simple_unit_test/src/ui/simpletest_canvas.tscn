@@ -8,6 +8,7 @@ script = ExtResource("1_nrp21")
 container = NodePath("ScrollContainer/Margin Container/VBoxContainer/Root Line Item")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
+texture_filter = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -37,4 +38,4 @@ text = "Failed Tests Only"
 [node name="Root Line Item" parent="ScrollContainer/Margin Container/VBoxContainer" instance=ExtResource("2_o7erm")]
 layout_mode = 2
 
-[connection signal="toggled" from="ScrollContainer/Margin Container/VBoxContainer/HBoxContainer/CheckButton" to="." method="_on_failled_button_toggled"]
+[connection signal="toggled" from="ScrollContainer/Margin Container/VBoxContainer/HBoxContainer/CheckButton" to="." method="_on_failed_button_toggled"]

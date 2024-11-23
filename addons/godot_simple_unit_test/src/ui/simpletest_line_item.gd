@@ -33,20 +33,14 @@ var ready_promise:SimpleTest_Promise = SimpleTest_Promise.new()
 
 signal on_rerun_request()
 
-func _enter_tree() -> void:
-	rerunButton.pressed.connect(func (): on_rerun_request.emit())
-
 func _ready():
 	collapse_toggle.text = uncollapse_txt
 	_is_ready = true
 	ready_promise.resolve()
 	sync_gui()
 	
-	
-func set_runner(runner):
-	_runner = runner
-	_runner.on_toggle_show_passed_tests.connect(sync_gui)
-	
+	rerunButton.pressed.connect(func (): on_rerun_request.emit())
+	SimpleTest.canvas.on_toggle_show_passed_tests.connect(sync_gui)	
 
 func sync_gui():
 	if !_is_ready: return
@@ -76,7 +70,7 @@ func sync_gui():
 			statusNode.hide()
 		
 	# Visibility logic
-	if HAS_PASSED and _runner._should_show_passed_tests or HAS_PASSED == false:
+	if HAS_PASSED and SimpleTest.canvas.should_show_passed_tests or HAS_PASSED == false:
 		self.show()
 	else:
 		self.hide()

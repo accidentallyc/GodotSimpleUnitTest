@@ -5,7 +5,7 @@ extends Node
 ## This cannot be run by itself
 class_name SimpleTest
 
-var SimpleTest_LineItemTscn = preload("res://addons/godot_simple_unit_test/src/ui/simpletest_line_item.tscn")
+var SimpleTest_LineItemTscn: PackedScene = preload("res://addons/godot_simple_unit_test/src/ui/simpletest_line_item.tscn")
 
 const EMPTY_ARRAY = []
 
@@ -103,11 +103,12 @@ var _cases_runnable:Array[SimpleTest_Utils.Case]
 ## Closest test runner found 
 @onready var parent_runner = SimpleTest_Utils.find_closest_runner(self) as SimpleTest
 
+static var canvas:CanvasLayer # Populated by SimpleTest_Runner.get_or_create_canvas 
+
+
 """
 NOTE: This _has_ to be overriden by runner
 """
-func _enter_tree():
-	pass
 
 func _ready():
 	cases =  SimpleTest_Utils.get_test_cases(self)
@@ -133,11 +134,11 @@ func _ready():
 		request_to_skip_suite
 	)
 	
-func set_runner(runner:SimpleTest_Runner):
+func set_runner(runner):
 	_runner = runner
 	_ln_item.set_runner(runner)
 
-func build_gui_element(runner:SimpleTest_Runner):
+func build_gui_element(runner):
 	_ln_item = SimpleTest_LineItemTscn.instantiate()
 	_ln_item.description = name
 
@@ -146,7 +147,6 @@ func build_gui_element(runner:SimpleTest_Runner):
 	
 	for case in cases:
 		var case_ln_item = SimpleTest_LineItemTscn.instantiate()
-		case_ln_item.set_runner(runner)
 		
 		case_ln_item.on_rerun_request.connect(func ():
 			await run_test_case(case)
@@ -315,7 +315,6 @@ func __run_test_run(case:SimpleTest_Utils.Case, ln_item):
 	ln_item.clear_blocks()
 	for f in _errors:
 		var f_line_item = SimpleTest_LineItemTscn.instantiate()
-		f_line_item.set_runner(_runner)
 		f_line_item.description = f
 		ln_item.add_block(f_line_item)	
 	

@@ -1,5 +1,4 @@
 @icon("res://addons/godot_simple_unit_test/src/ui/icon_runner.png")
-
 @tool
 extends SimpleTest
 
@@ -13,23 +12,20 @@ var _tests:Array = []
 ## Same as _tests but with the skips filetered out
 var _runnable_tests:Array 
 
-var _canvas
 var _solo_tests = []
 var _has_solo_test_suites = false
-var _should_show_passed_tests = false
+var should_show_passed_tests = false
 
 signal on_toggle_show_passed_tests
 
+
+func _enter_tree() -> void:
+	get_or_create_canvas()
+
 func _ready():
-	if Engine.is_editor_hint():
-		return
+	if Engine.is_editor_hint(): return
 	
-	var SimpleTest_CanvasTscn = load("res://addons/godot_simple_unit_test/src/ui/simpletest_canvas.tscn")
-	
-	_canvas = SimpleTest_CanvasTscn.instantiate()
-	_canvas._runner = self
-	add_child(_canvas)
-	await _canvas.ready_future.completed()
+	await canvas.ready_future.completed()
 	
 	_runnable_tests = _tests.filter(func(c): return !c.skip)
 	_begin_test_runs()
@@ -71,7 +67,7 @@ func _begin_test_runs():
 		var test:SimpleTest = entry.test
 		var gui = await test.build_gui_element(self)
 		add_block(gui)
-		test.set_runner(self)
+# 		test.set_runner(self)
 		
 		test.on_case_rerun_request.connect(func ():
 			# This is called when a single test case is rerun
@@ -102,11 +98,10 @@ func sync_gui():
 	var stats = get_stats()
 	
 	if stats.total == 0:
-		_canvas.container.description = "No tests yet. Add a new node of type SimpleTest to start 😁"
+		canvas.container.description = "No tests yet. Add a new node of type SimpleTest to start 😁"
 		return
 	
-	var container = _canvas.container	
-	container.set_runner(self)
+	var container = canvas.container	
 	container.rerunButton.hide() 
 	container.status = &"FAIL" if stats.failed else &"PASS"
 	container.description = &"{name} ({passing}/{total} passed)".format({
@@ -117,21 +112,14 @@ func sync_gui():
 	
 	container.sync_gui()
 
-
-"""
-#########################
-# Warning Handling Code #
-#########################
-"""
-func _enter_tree():
-	child_entered_tree.connect(func(_dummy): update_configuration_warnings())
-
-
-func _get_configuration_warnings():
-	if !(owner == null or owner == self):
-		return ["SimpleTest_Runner must be a root node"]
-	else:
-		return []
-	
 func add_block(block:Control):
-	_canvas.add_block.call_deferred(block)
+	canvas.add_block.call_deferred(block)
+	
+var SimpleTest_CanvasTscn: PackedScene = preload("res://addons/godot_simple_unit_test/src/ui/simpletest_canvas.tscn")
+
+func get_or_create_canvas():
+	if not canvas:
+		canvas = SimpleTest_CanvasTscn.instantiate()
+		canvas.name = "Simple Test Canvas"
+		get_tree().current_scene.add_child(canvas) 
+	return canvas
