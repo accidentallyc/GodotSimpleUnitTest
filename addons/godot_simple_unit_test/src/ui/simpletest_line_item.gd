@@ -34,7 +34,6 @@ var ready_promise:SimpleTest_Promise = SimpleTest_Promise.new()
 signal on_rerun_request()
 
 func _ready():
-	collapse_toggle.text = uncollapse_txt
 	_is_ready = true
 	ready_promise.resolve()
 	sync_gui()

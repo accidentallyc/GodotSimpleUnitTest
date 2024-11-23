@@ -19,7 +19,7 @@ layout_mode = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-text = "  -  "
+text = " ➖ "
 
 [node name="Rerun Button" type="Button" parent="HBoxContainer - Line Item"]
 unique_name_in_owner = true
