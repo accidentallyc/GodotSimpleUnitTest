@@ -7,7 +7,7 @@ extends VBoxContainer
 @export var rerunButton:Button
 @export var collapse_toggle:Button
 
-var _runner:SimpleTest_Runner
+var _runner:Variant # Do not set to runner type, causes cyclical deps
 
 var status = &"":
 	get:
